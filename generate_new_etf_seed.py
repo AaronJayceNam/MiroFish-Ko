@@ -64,6 +64,33 @@ load_env()
 
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# 0. DB 연결 헬퍼
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+def _get_db_conn():
+    """Supabase DB 연결을 반환. 실패 시 None."""
+    if not SUPABASE_DB_URL:
+        return None
+    try:
+        import psycopg2
+        return psycopg2.connect(SUPABASE_DB_URL)
+    except Exception as e:
+        print(f"  DB 연결 실패: {e}")
+        return None
+
+
+def _build_ilike_params(column: str, keywords: List[str], prefix: str = "kw"):
+    """SQL ILIKE 조건과 파라미터를 안전하게 생성."""
+    conditions = []
+    params = {}
+    for i, kw in enumerate(keywords):
+        key = f"{prefix}_{i}"
+        conditions.append(f"{column} ILIKE %({key})s")
+        params[key] = f"%{kw}%"
+    return " OR ".join(conditions), params
+
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 # 1. 웹 데이터 수집 (네이버/구글 검색)
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -195,24 +222,21 @@ def collect_theme_data(theme: str, keywords: List[str]) -> Dict:
 
 def get_existing_market_context(theme: str, keywords: List[str]) -> str:
     """기존 Supabase DB에서 테마 관련 데이터 추출"""
-    try:
-        import psycopg2
-        conn = psycopg2.connect(SUPABASE_DB_URL)
-        c = conn.cursor()
-    except Exception as e:
-        print(f"  DB 연결 실패, 기존 데이터 스킵: {e}")
+    conn = _get_db_conn()
+    if not conn:
         return ""
+    c = conn.cursor()
 
     lines = []
 
     # 1. 관련 트렌드 뉴스
-    kw_conditions = " OR ".join([f"title ILIKE '%{kw}%'" for kw in keywords[:5]])
     try:
+        cond, params = _build_ilike_params("title", keywords[:5], "tn")
         c.execute(f"""
             SELECT title, source, category, summary, published_at
-            FROM trend_news WHERE ({kw_conditions})
+            FROM trend_news WHERE ({cond})
             ORDER BY published_at DESC LIMIT 15
-        """)
+        """, params)
         rows = c.fetchall()
         if rows:
             lines.append("### 관련 트렌드 뉴스 (기존 DB)")
@@ -221,35 +245,35 @@ def get_existing_market_context(theme: str, keywords: List[str]) -> str:
                 if r[3]:
                     lines.append(f"  {r[3][:200]}")
             lines.append("")
-    except:
+    except Exception:
         pass
 
     # 2. 관련 ETF 버즈
     try:
-        kw_etf = " OR ".join([f"e.name ILIKE '%{kw}%'" for kw in keywords[:5]])
+        cond, params = _build_ilike_params("e.name", keywords[:5], "eb")
         c.execute(f"""
             SELECT e.name, e.category, SUM(b.buzz_score) as buzz
             FROM buzz_daily b JOIN etf_registry e ON b.ticker=e.ticker
-            WHERE ({kw_etf}) AND b.date::date >= (CURRENT_DATE - INTERVAL '30 days')
+            WHERE ({cond}) AND b.date::date >= (CURRENT_DATE - INTERVAL '30 days')
             GROUP BY e.name, e.category ORDER BY buzz DESC LIMIT 10
-        """)
+        """, params)
         rows = c.fetchall()
         if rows:
             lines.append("### 관련 기존 ETF 버즈 (최근 30일)")
             for r in rows:
                 lines.append(f"- {r[0]} ({r[1]}): 버즈 {float(r[2]):.0f}")
             lines.append("")
-    except:
+    except Exception:
         pass
 
     # 3. 관련 트렌드 분석
     try:
-        kw_analysis = " OR ".join([f"analysis_text ILIKE '%{kw}%'" for kw in keywords[:3]])
+        cond, params = _build_ilike_params("analysis_text", keywords[:3], "ta")
         c.execute(f"""
             SELECT category, analysis_text, analysis_date
-            FROM trend_analyses WHERE ({kw_analysis})
+            FROM trend_analyses WHERE ({cond})
             ORDER BY analysis_date DESC LIMIT 3
-        """)
+        """, params)
         rows = c.fetchall()
         if rows:
             lines.append("### 관련 전문가 분석 (기존 DB)")
@@ -257,7 +281,7 @@ def get_existing_market_context(theme: str, keywords: List[str]) -> str:
                 lines.append(f"**{r[0]}** ({r[2]}):")
                 lines.append(r[1][:600])
                 lines.append("")
-    except:
+    except Exception:
         pass
 
     # 4. 시장 심리 요약 (최신)
@@ -273,8 +297,339 @@ def get_existing_market_context(theme: str, keywords: List[str]) -> str:
             lines.append(f"시장 온도: {rj.get('market_temperature', '?')}/100 ({rj.get('temperature_label', '')})")
             lines.append(rj.get("core_narrative", "")[:500])
             lines.append("")
-    except:
+    except Exception:
         pass
+
+    conn.close()
+    return "\n".join(lines)
+
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# 2-B. 확장 DB 추출 (etf-buzz-monitor)
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+def get_etf_launch_cases(keywords: List[str], limit: int = 5) -> str:
+    """과거 유사 테마 ETF의 런칭 사례를 DB에서 추출 (성과+버즈+AUM+투자자수급)"""
+    conn = _get_db_conn()
+    if not conn:
+        return ""
+    c = conn.cursor()
+    lines = []
+
+    try:
+        # 키워드와 매칭되는 ETF 찾기
+        cond, params = _build_ilike_params("e.name", keywords[:5], "lc")
+        c.execute(f"""
+            SELECT DISTINCT e.ticker, e.name, e.category
+            FROM etf_registry e
+            WHERE ({cond})
+            ORDER BY e.name LIMIT {limit}
+        """, params)
+        etfs = c.fetchall()
+
+        if not etfs:
+            conn.close()
+            return ""
+
+        lines.append("### 과거 유사 ETF 런칭 사례")
+        lines.append("")
+
+        for ticker, name, category in etfs:
+            lines.append(f"#### {name} ({ticker}, {category})")
+
+            # 상장 초기 30일 성과
+            c.execute("""
+                SELECT date, close, volume
+                FROM etf_performance
+                WHERE ticker = %(tk)s
+                ORDER BY date ASC LIMIT 30
+            """, {"tk": ticker})
+            perf_rows = c.fetchall()
+            if perf_rows:
+                first_date = perf_rows[0][0]
+                first_close = perf_rows[0][1]
+                last_close = perf_rows[-1][1]
+                total_volume = sum(r[2] or 0 for r in perf_rows)
+                avg_volume = total_volume // len(perf_rows) if perf_rows else 0
+                price_change = ((last_close - first_close) / first_close * 100) if first_close else 0
+                lines.append(f"- 첫 거래일: {first_date}")
+                lines.append(f"- 초기 30일 가격 변동: {price_change:+.1f}%")
+                lines.append(f"- 일평균 거래량: {avg_volume:,}주")
+
+            # 상장 초기 AUM 변화
+            c.execute("""
+                SELECT date, aum FROM etf_aum
+                WHERE ticker = %(tk)s
+                ORDER BY date ASC LIMIT 30
+            """, {"tk": ticker})
+            aum_rows = c.fetchall()
+            if aum_rows:
+                first_aum = aum_rows[0][1] or 0
+                last_aum = aum_rows[-1][1] or 0
+                aum_growth = ((last_aum - first_aum) / first_aum * 100) if first_aum else 0
+                lines.append(f"- 초기 AUM: {first_aum / 1e8:,.0f}억원 → {last_aum / 1e8:,.0f}억원 ({aum_growth:+.0f}%)")
+
+            # 상장 초기 버즈
+            c.execute("""
+                SELECT date, buzz_score, youtube_total_views,
+                       cafe_post_count, blog_post_count
+                FROM buzz_daily
+                WHERE ticker = %(tk)s
+                ORDER BY date ASC LIMIT 30
+            """, {"tk": ticker})
+            buzz_rows = c.fetchall()
+            if buzz_rows:
+                avg_buzz = sum(r[1] or 0 for r in buzz_rows) / len(buzz_rows)
+                total_yt_views = sum(r[2] or 0 for r in buzz_rows)
+                total_cafe = sum(r[3] or 0 for r in buzz_rows)
+                total_blog = sum(r[4] or 0 for r in buzz_rows)
+                lines.append(f"- 초기 30일 평균 버즈: {avg_buzz:.1f}")
+                lines.append(f"- 유튜브 총 조회수: {total_yt_views:,}, 카페 {total_cafe}건, 블로그 {total_blog}건")
+
+            # 투자자 수급 (초기)
+            c.execute("""
+                SELECT SUM(individual_net_buy), SUM(institutional_net_buy),
+                       SUM(foreign_net_buy)
+                FROM etf_investor_trading
+                WHERE ticker = %(tk)s
+                ORDER BY date ASC LIMIT 30
+            """, {"tk": ticker})
+            inv_row = c.fetchone()
+            if inv_row and any(v is not None for v in inv_row):
+                ind = inv_row[0] or 0
+                inst = inv_row[1] or 0
+                frgn = inv_row[2] or 0
+                lines.append(f"- 초기 순매수: 개인 {ind:+,}주, 기관 {inst:+,}주, 외국인 {frgn:+,}주")
+
+            # 성공/실패 판단
+            if perf_rows and aum_rows:
+                if (last_aum or 0) > 500e8 and price_change > -5:
+                    lines.append(f"- **판정: 성공** (AUM {last_aum/1e8:,.0f}억 달성)")
+                elif (last_aum or 0) < 50e8 or price_change < -15:
+                    lines.append(f"- **판정: 부진** (AUM {last_aum/1e8:,.0f}억, 수익률 {price_change:+.1f}%)")
+                else:
+                    lines.append(f"- **판정: 보통**")
+
+            lines.append("")
+
+    except Exception as e:
+        print(f"  런칭 사례 추출 실패: {e}")
+
+    conn.close()
+    return "\n".join(lines)
+
+
+def get_youtube_channel_influence(keywords: List[str]) -> str:
+    """ETF 관련 유튜브 채널 영향력 데이터 추출"""
+    conn = _get_db_conn()
+    if not conn:
+        return ""
+    c = conn.cursor()
+    lines = []
+
+    try:
+        # 전체 ETF 유튜브 채널 영향력 Top 15
+        c.execute("""
+            SELECT d.channel_title, d.estimated_age_group, d.content_style,
+                   d.video_count, d.total_views, d.ace_video_count, d.ace_view_count
+            FROM youtube_channel_demographics d
+            WHERE d.total_views > 0
+            ORDER BY d.total_views DESC LIMIT 15
+        """)
+        rows = c.fetchall()
+        if rows:
+            lines.append("### 유튜브 채널 영향력 Top 15 (ETF 콘텐츠)")
+            lines.append("")
+            lines.append("| 채널 | 추정 시청 연령 | 콘텐츠 스타일 | 영상 수 | 총 조회수 | ACE 영상 | ACE 조회수 |")
+            lines.append("|------|--------------|-------------|---------|----------|---------|----------|")
+            for r in rows:
+                ch = r[0] or "?"
+                age = r[1] or "?"
+                style = (r[2] or "?")[:20]
+                vcnt = r[3] or 0
+                views = r[4] or 0
+                ace_v = r[5] or 0
+                ace_vw = r[6] or 0
+                lines.append(f"| {ch[:20]} | {age} | {style} | {vcnt} | {views:,} | {ace_v} | {ace_vw:,} |")
+            lines.append("")
+
+        # 키워드 관련 유튜브 영상 최신 10건
+        if keywords:
+            cond, params = _build_ilike_params("v.title", keywords[:3], "yt")
+            c.execute(f"""
+                SELECT v.title, v.channel_title, v.view_count,
+                       v.comment_count, v.sentiment_label, v.published_at
+                FROM youtube_videos v
+                WHERE ({cond})
+                ORDER BY v.published_at DESC LIMIT 10
+            """, params)
+            vrows = c.fetchall()
+            if vrows:
+                lines.append("### 테마 관련 최신 유튜브 영상")
+                lines.append("")
+                for r in vrows:
+                    title = (r[0] or "")[:60]
+                    ch = r[1] or "?"
+                    views = r[2] or 0
+                    comments = r[3] or 0
+                    sent = r[4] or "?"
+                    date = (r[5] or "")[:10]
+                    lines.append(f"- **{title}** ({ch}, {date})")
+                    lines.append(f"  조회 {views:,}, 댓글 {comments}, 감성: {sent}")
+                lines.append("")
+
+    except Exception as e:
+        print(f"  유튜브 채널 데이터 추출 실패: {e}")
+
+    conn.close()
+    return "\n".join(lines)
+
+
+def get_competing_etf_details(keywords: List[str]) -> str:
+    """경쟁 ETF 상세 비교표 (보수, AUM, 보유종목)"""
+    conn = _get_db_conn()
+    if not conn:
+        return ""
+    c = conn.cursor()
+    lines = []
+
+    try:
+        cond, params = _build_ilike_params("e.name", keywords[:5], "ce")
+        c.execute(f"""
+            SELECT e.ticker, e.name, e.category, e.brand,
+                   f.total_expense_ratio,
+                   (SELECT aum FROM etf_aum WHERE ticker = e.ticker
+                    ORDER BY date DESC LIMIT 1) as latest_aum
+            FROM etf_registry e
+            LEFT JOIN etf_fee f ON e.ticker = f.ticker
+            WHERE ({cond})
+            ORDER BY latest_aum DESC NULLS LAST
+            LIMIT 15
+        """, params)
+        rows = c.fetchall()
+
+        if rows:
+            lines.append("### 경쟁/유사 ETF 비교표")
+            lines.append("")
+            lines.append("| ETF명 | 브랜드 | 카테고리 | 총보수 | AUM(억) |")
+            lines.append("|-------|--------|---------|--------|---------|")
+            for r in rows:
+                name = r[1] or "?"
+                brand = r[3] or "?"
+                cat = r[2] or "?"
+                fee = f"{r[4]:.2f}%" if r[4] else "N/A"
+                aum = f"{r[5]/1e8:,.0f}" if r[5] else "N/A"
+                lines.append(f"| {name[:30]} | {brand} | {cat} | {fee} | {aum} |")
+            lines.append("")
+
+            # 상위 3개 ETF의 보유종목
+            for ticker, name, *_ in rows[:3]:
+                c.execute("""
+                    SELECT stock_name, weight FROM etf_holdings
+                    WHERE ticker = %(tk)s
+                    ORDER BY date DESC, rank ASC LIMIT 10
+                """, {"tk": ticker})
+                hrows = c.fetchall()
+                if hrows:
+                    holding_str = ", ".join(
+                        f"{h[0]}({h[1]:.1f}%)" if h[1] else h[0]
+                        for h in hrows
+                    )
+                    lines.append(f"- **{name}** 주요종목: {holding_str}")
+            if rows[:3]:
+                lines.append("")
+
+    except Exception as e:
+        print(f"  경쟁 ETF 데이터 추출 실패: {e}")
+
+    conn.close()
+    return "\n".join(lines)
+
+
+def get_community_reactions(keywords: List[str]) -> str:
+    """커뮤니티 실제 투자자 반응 샘플 (카페, 토스, 블로그)"""
+    conn = _get_db_conn()
+    if not conn:
+        return ""
+    c = conn.cursor()
+    lines = []
+
+    try:
+        # 네이버 카페 반응
+        cond, params = _build_ilike_params("title", keywords[:3], "cf")
+        c.execute(f"""
+            SELECT title, cafe_name, sentiment_label,
+                   content, published_at
+            FROM naver_cafe_posts
+            WHERE ({cond})
+            ORDER BY published_at DESC LIMIT 8
+        """, params)
+        rows = c.fetchall()
+        if rows:
+            lines.append("### 투자자 커뮤니티 반응 (네이버 카페)")
+            lines.append("")
+            for r in rows:
+                title = (r[0] or "")[:60]
+                cafe = r[1] or "?"
+                sent = r[2] or "중립"
+                snippet = (r[3] or "")[:150].replace("\n", " ")
+                date = (r[4] or "")[:10]
+                lines.append(f"- **{title}** ({cafe}, {date}, {sent})")
+                if snippet:
+                    lines.append(f"  > {snippet}")
+            lines.append("")
+
+        # 토스 커뮤니티 반응
+        cond, params = _build_ilike_params("content", keywords[:3], "ts")
+        c.execute(f"""
+            SELECT title, content, sentiment_label,
+                   like_count, reply_count, published_at
+            FROM toss_community_posts
+            WHERE ({cond})
+            ORDER BY published_at DESC LIMIT 8
+        """, params)
+        rows = c.fetchall()
+        if rows:
+            lines.append("### 투자자 커뮤니티 반응 (토스증권)")
+            lines.append("")
+            for r in rows:
+                title = (r[0] or "")[:60]
+                snippet = (r[1] or "")[:150].replace("\n", " ")
+                sent = r[2] or "중립"
+                likes = r[3] or 0
+                replies = r[4] or 0
+                date = (r[5] or "")[:10]
+                lines.append(f"- **{title}** ({date}, {sent}, 좋아요 {likes}, 댓글 {replies})")
+                if snippet:
+                    lines.append(f"  > {snippet}")
+            lines.append("")
+
+        # 블로그 투자 분석
+        cond, params = _build_ilike_params("title", keywords[:3], "bg")
+        c.execute(f"""
+            SELECT title, blog_name, sentiment_label,
+                   content, published_at
+            FROM naver_blog_posts
+            WHERE ({cond})
+            ORDER BY published_at DESC LIMIT 5
+        """, params)
+        rows = c.fetchall()
+        if rows:
+            lines.append("### 블로그 투자 분석 (DB 수집)")
+            lines.append("")
+            for r in rows:
+                title = (r[0] or "")[:60]
+                blog = r[1] or "?"
+                sent = r[2] or "중립"
+                snippet = (r[3] or "")[:200].replace("\n", " ")
+                date = (r[4] or "")[:10]
+                lines.append(f"- **{title}** ({blog}, {date}, {sent})")
+                if snippet:
+                    lines.append(f"  > {snippet}")
+            lines.append("")
+
+    except Exception as e:
+        print(f"  커뮤니티 반응 추출 실패: {e}")
 
     conn.close()
     return "\n".join(lines)
@@ -443,6 +798,10 @@ def build_seed_document(
     etf_concept: Dict,
     collected_data: Dict,
     db_context: str,
+    launch_cases: str,
+    youtube_influence: str,
+    competing_details: str,
+    community_reactions: str,
     analysis: str,
     simulation_prompt: str,
     output_path: str,
@@ -526,8 +885,36 @@ def build_seed_document(
         doc.append(db_context)
         doc.append("")
 
-    # Part 4: AI 분석
-    doc.append("## 4. 테마 투자자 관심도 AI 분석")
+    # Part 4: 과거 ETF 런칭 사례
+    if launch_cases:
+        doc.append("## 4. 과거 유사 ETF 런칭 사례")
+        doc.append("")
+        doc.append(launch_cases)
+        doc.append("")
+
+    # Part 5: 유튜브 채널 영향력
+    if youtube_influence:
+        doc.append("## 5. 유튜브 채널 영향력 데이터")
+        doc.append("")
+        doc.append(youtube_influence)
+        doc.append("")
+
+    # Part 6: 경쟁 ETF 상세 비교
+    if competing_details:
+        doc.append("## 6. 경쟁 ETF 상세 비교")
+        doc.append("")
+        doc.append(competing_details)
+        doc.append("")
+
+    # Part 7: 커뮤니티 실제 반응
+    if community_reactions:
+        doc.append("## 7. 투자자 커뮤니티 실제 반응")
+        doc.append("")
+        doc.append(community_reactions)
+        doc.append("")
+
+    # Part 8: AI 분석
+    doc.append("## 8. 테마 투자자 관심도 AI 분석")
     doc.append("")
     doc.append(analysis)
     doc.append("")
@@ -596,7 +983,7 @@ def main():
             "competing_etfs": [],
         }
     else:
-        print("\n[Step 1/5] LLM으로 ETF 컨셉 자동 설계 중...")
+        print("\n[Step 1/8] LLM으로 ETF 컨셉 자동 설계 중...")
         etf_concept = generate_etf_concept(theme)
         print(f"  → {etf_concept.get('etf_name', '?')}")
 
@@ -607,19 +994,35 @@ def main():
     keywords = list(dict.fromkeys(keywords))  # 중복 제거, 순서 유지
 
     # Step 2: 웹 데이터 수집
-    print("\n[Step 2/5] 온라인 데이터 수집 중...")
+    print("\n[Step 2/8] 온라인 데이터 수집 중...")
     collected_data = collect_theme_data(theme, keywords[:8])
 
     # Step 3: 기존 DB 데이터 추출
-    print("\n[Step 3/5] 기존 DB에서 관련 데이터 추출 중...")
+    print("\n[Step 3/8] 기존 DB에서 관련 데이터 추출 중...")
     db_context = get_existing_market_context(theme, keywords[:5])
 
-    # Step 4: AI 분석
-    print("\n[Step 4/5] AI 투자자 관심도 분석 중...")
+    # Step 4: 과거 ETF 런칭 사례
+    print("\n[Step 4/8] 과거 유사 ETF 런칭 사례 추출 중...")
+    launch_cases = get_etf_launch_cases(keywords[:5])
+
+    # Step 5: 유튜브 채널 영향력
+    print("\n[Step 5/8] 유튜브 채널 영향력 데이터 추출 중...")
+    youtube_influence = get_youtube_channel_influence(keywords[:5])
+
+    # Step 6: 경쟁 ETF 상세 비교
+    print("\n[Step 6/8] 경쟁 ETF 상세 비교 데이터 추출 중...")
+    competing_details = get_competing_etf_details(keywords[:5])
+
+    # Step 6.5: 커뮤니티 실제 반응
+    print("\n[Step 6.5/8] 투자자 커뮤니티 반응 추출 중...")
+    community_reactions = get_community_reactions(keywords[:5])
+
+    # Step 7: AI 분석
+    print("\n[Step 7/8] AI 투자자 관심도 분석 중...")
     analysis = generate_analysis(theme, etf_concept, collected_data, db_context)
 
-    # Step 5: 시뮬레이션 프롬프트 생성
-    print("\n[Step 5/5] MiroFish 시뮬레이션 프롬프트 생성 중...")
+    # Step 8: 시뮬레이션 프롬프트 생성
+    print("\n[Step 8/8] MiroFish 시뮬레이션 프롬프트 생성 중...")
     simulation_prompt = generate_simulation_prompt(theme, etf_concept)
 
     # 최종 문서 생성
@@ -628,6 +1031,10 @@ def main():
         etf_concept=etf_concept,
         collected_data=collected_data,
         db_context=db_context,
+        launch_cases=launch_cases,
+        youtube_influence=youtube_influence,
+        competing_details=competing_details,
+        community_reactions=community_reactions,
         analysis=analysis,
         simulation_prompt=simulation_prompt,
         output_path=output_path,
