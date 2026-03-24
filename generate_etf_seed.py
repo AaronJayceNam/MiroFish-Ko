@@ -19,10 +19,7 @@ from datetime import datetime, timedelta
 import psycopg2
 
 # ── DB 연결 ──
-DB_URL = os.environ.get(
-    "SUPABASE_DB_URL",
-    "postgresql://postgres:aceetf4947!!@db.xlkfxhiaofgjvkrydpjm.supabase.co:5432/postgres"
-)
+DB_URL = os.environ.get("SUPABASE_DB_URL", "")
 
 
 def get_conn():

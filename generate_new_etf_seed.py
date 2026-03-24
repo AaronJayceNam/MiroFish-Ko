@@ -25,25 +25,39 @@ from urllib.parse import quote_plus
 
 # ── 설정 ──
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", "")
-SUPABASE_DB_URL = os.environ.get(
-    "SUPABASE_DB_URL",
-    "postgresql://postgres:aceetf4947!!@db.xlkfxhiaofgjvkrydpjm.supabase.co:5432/postgres"
-)
+SUPABASE_DB_URL = os.environ.get("SUPABASE_DB_URL", "")
+NAVER_CLIENT_ID = os.environ.get("NAVER_CLIENT_ID", "")
+NAVER_CLIENT_SECRET = os.environ.get("NAVER_CLIENT_SECRET", "")
 
 
 def load_env():
     """MiroFish .env에서 키 로드"""
-    global OPENAI_API_KEY
+    global OPENAI_API_KEY, SUPABASE_DB_URL, NAVER_CLIENT_ID, NAVER_CLIENT_SECRET
     env_path = os.path.join(os.path.dirname(__file__), ".env")
     if os.path.exists(env_path):
+        env_map = {
+            "LLM_API_KEY": "OPENAI_API_KEY",
+            "OPENAI_API_KEY": "OPENAI_API_KEY",
+            "SUPABASE_DB_URL": "SUPABASE_DB_URL",
+            "NAVER_CLIENT_ID": "NAVER_CLIENT_ID",
+            "NAVER_CLIENT_SECRET": "NAVER_CLIENT_SECRET",
+        }
         with open(env_path) as f:
             for line in f:
                 line = line.strip()
                 if line and not line.startswith("#") and "=" in line:
                     k, v = line.split("=", 1)
                     k, v = k.strip(), v.strip()
-                    if k == "LLM_API_KEY" and not OPENAI_API_KEY:
-                        OPENAI_API_KEY = v
+                    if k in env_map:
+                        target = env_map[k]
+                        if target == "OPENAI_API_KEY" and not OPENAI_API_KEY:
+                            OPENAI_API_KEY = v
+                        elif target == "SUPABASE_DB_URL" and not SUPABASE_DB_URL:
+                            SUPABASE_DB_URL = v
+                        elif target == "NAVER_CLIENT_ID" and not NAVER_CLIENT_ID:
+                            NAVER_CLIENT_ID = v
+                        elif target == "NAVER_CLIENT_SECRET" and not NAVER_CLIENT_SECRET:
+                            NAVER_CLIENT_SECRET = v
 
 
 load_env()
@@ -56,8 +70,8 @@ load_env()
 def search_naver_blog(query: str, display: int = 20) -> List[Dict]:
     """네이버 블로그 검색 API"""
     import urllib.request
-    client_id = "waXB1NFRJGBVGxb4D11c"
-    client_secret = "RfvbnFRW1p"
+    client_id = NAVER_CLIENT_ID
+    client_secret = NAVER_CLIENT_SECRET
     url = f"https://openapi.naver.com/v1/search/blog.json?query={quote_plus(query)}&display={display}&sort=date"
     req = urllib.request.Request(url)
     req.add_header("X-Naver-Client-Id", client_id)
@@ -74,8 +88,8 @@ def search_naver_blog(query: str, display: int = 20) -> List[Dict]:
 def search_naver_news(query: str, display: int = 20) -> List[Dict]:
     """네이버 뉴스 검색 API"""
     import urllib.request
-    client_id = "waXB1NFRJGBVGxb4D11c"
-    client_secret = "RfvbnFRW1p"
+    client_id = NAVER_CLIENT_ID
+    client_secret = NAVER_CLIENT_SECRET
     url = f"https://openapi.naver.com/v1/search/news.json?query={quote_plus(query)}&display={display}&sort=date"
     req = urllib.request.Request(url)
     req.add_header("X-Naver-Client-Id", client_id)
@@ -92,8 +106,8 @@ def search_naver_news(query: str, display: int = 20) -> List[Dict]:
 def search_naver_cafearticle(query: str, display: int = 10) -> List[Dict]:
     """네이버 카페 검색 API"""
     import urllib.request
-    client_id = "waXB1NFRJGBVGxb4D11c"
-    client_secret = "RfvbnFRW1p"
+    client_id = NAVER_CLIENT_ID
+    client_secret = NAVER_CLIENT_SECRET
     url = f"https://openapi.naver.com/v1/search/cafearticle.json?query={quote_plus(query)}&display={display}&sort=date"
     req = urllib.request.Request(url)
     req.add_header("X-Naver-Client-Id", client_id)
