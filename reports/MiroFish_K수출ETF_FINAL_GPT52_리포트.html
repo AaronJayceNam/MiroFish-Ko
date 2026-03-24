@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="UTF-8">
+<title>MiroFish FINAL — GPT-5.2 시뮬레이션 리포트</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Noto Sans KR',sans-serif;background:#fafafa;color:#1a1a1a;line-height:1.8}
+.c{max-width:1100px;margin:0 auto;padding:20px}
+.hero{background:linear-gradient(135deg,#0d0d2b,#1a0a3e 40%,#4a1a8a 70%,#ff6b35);color:#fff;padding:70px 50px;border-radius:20px;margin-bottom:30px}
+.hero h1{font-size:2.4em;font-weight:900}.hero .sub{font-size:1.1em;opacity:.8;margin:10px 0 20px}
+.hero .meta{display:flex;gap:14px;flex-wrap:wrap;font-size:.85em}.hero .meta span{background:rgba(255,255,255,.12);padding:4px 14px;border-radius:20px}
+.card{background:#fff;border-radius:14px;padding:32px 36px;margin-bottom:20px;box-shadow:0 2px 10px rgba(0,0,0,.05)}
+.card h2{font-size:1.4em;font-weight:700;margin-bottom:14px;padding-bottom:10px;border-bottom:3px solid #4a1a8a;color:#4a1a8a}
+.card h3{font-size:1.1em;font-weight:600;margin:16px 0 8px;color:#1a1a3e}
+table{width:100%;border-collapse:collapse;margin:12px 0;font-size:.9em}
+th{background:#4a1a8a;color:#fff;padding:10px 14px;text-align:left}td{padding:9px 14px;border-bottom:1px solid #eee}tr:hover td{background:#f8f9ff}
+.sg{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin:14px 0}
+.sb{background:linear-gradient(135deg,#f8f4ff,#f0e8ff);border-radius:12px;padding:20px;text-align:center;border:1px solid #e0d0f0}
+.sb .n{font-size:2em;font-weight:900;color:#4a1a8a}.sb .l{font-size:.82em;color:#666;margin-top:4px}
+.q{background:#f8f4ff;border-left:4px solid #4a1a8a;padding:12px 16px;margin:8px 0;border-radius:0 8px 8px 0;font-size:.9em}
+.q .a{font-weight:600;color:#4a1a8a;margin-bottom:4px;font-size:.85em}
+.badge{display:inline-block;padding:3px 10px;border-radius:12px;font-size:.78em;font-weight:500}
+.b1{background:#ede7f6;color:#4a148c}.b2{background:#e3f2fd;color:#0d47a1}.b3{background:#fce4ec;color:#b71c1c}.b4{background:#e8f5e9;color:#1b5e20}.b5{background:#fff3e0;color:#e65100}.b6{background:#fff8e1;color:#f57f17}
+.pb{height:8px;background:#e0e0e0;border-radius:4px;overflow:hidden;margin:4px 0}.pf{height:100%;background:linear-gradient(90deg,#4a1a8a,#ff6b35);border-radius:4px}
+.compare{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin:16px 0}
+.compare-box{border:1px solid #e0e0e0;border-radius:10px;padding:16px;text-align:center}
+.compare-box.winner{border-color:#4a1a8a;background:#f8f4ff}
+.ft{text-align:center;padding:30px;color:#999;font-size:.82em}
+</style></head><body><div class="c">
+
+<div class="hero">
+<h1>FINAL — GPT-5.2 시뮬레이션 리포트</h1>
+<div class="sub">ACE K수출핵심TOP10산업액티브 | 최종 고품질 시뮬레이션</div>
+<div class="meta">
+<span>sim_e4f88b4b1089</span><span>모델: GPT-5.2</span><span>2026-03-25 07:52</span><span>FINAL</span>
+</div></div>
+
+<div class="card"><h2>1. 3개 시뮬레이션 비교</h2>
+<div class="compare">
+<div class="compare-box"><h3>v1 (gpt-4o-mini)</h3><p>에이전트 35</p><p>액션 601</p><p>일반적 발화 65%</p><p>시드 11,939 bytes</p></div>
+<div class="compare-box"><h3>v2 탐색 (gpt-4o-mini)</h3><p>에이전트 77</p><p>액션 501</p><p>시드 25,564 bytes</p><p>투자자 유형 10가지</p></div>
+<div class="compare-box winner"><h3>FINAL (GPT-5.2)</h3><p>에이전트 <strong>48</strong></p><p>액션 <strong>329</strong></p><p>구체적 발화 <strong>102/102 (100%)</strong></p><p>모델 품질 <strong>8/10</strong></p></div>
+</div>
+<div class="sg">
+<div class="sb"><div class="n">48</div><div class="l">에이전트</div></div>
+<div class="sb"><div class="n">329</div><div class="l">총 액션</div></div>
+<div class="sb"><div class="n">149</div><div class="l">Twitter</div></div>
+<div class="sb"><div class="n">180</div><div class="l">Reddit</div></div>
+<div class="sb"><div class="n">102</div><div class="l">유의미 발화</div></div>
+<div class="sb"><div class="n">100%</div><div class="l">구체적 발화율</div></div>
+</div></div>
+
+<div class="card"><h2>2. 액션 유형</h2>
+<table><tr><th>액션</th><th>횟수</th><th>비중</th></tr><tr><td>LIKE_POST</td><td>121</td><td><div class='pb'><div class='pf' style='width:36.77811550151976%'></div></div>36.8%</td></tr><tr><td>CREATE_COMMENT</td><td>81</td><td><div class='pb'><div class='pf' style='width:24.620060790273556%'></div></div>24.6%</td></tr><tr><td>QUOTE_POST</td><td>62</td><td><div class='pb'><div class='pf' style='width:18.84498480243161%'></div></div>18.8%</td></tr><tr><td>CREATE_POST</td><td>21</td><td><div class='pb'><div class='pf' style='width:6.382978723404255%'></div></div>6.4%</td></tr><tr><td>REPOST</td><td>20</td><td><div class='pb'><div class='pf' style='width:6.079027355623101%'></div></div>6.1%</td></tr><tr><td>FOLLOW</td><td>15</td><td><div class='pb'><div class='pf' style='width:4.5592705167173255%'></div></div>4.6%</td></tr><tr><td>LIKE_COMMENT</td><td>8</td><td><div class='pb'><div class='pf' style='width:2.43161094224924%'></div></div>2.4%</td></tr><tr><td>DO_NOTHING</td><td>1</td><td><div class='pb'><div class='pf' style='width:0.303951367781155%'></div></div>0.3%</td></tr></table></div>
+
+<div class="card"><h2>3. 핵심 키워드 언급</h2>
+<table><tr><th>키워드</th><th>GPT-5.2</th></tr><tr><td>연금</td><td><span class='badge b4'>54회</span></td></tr><tr><td>ISA</td><td><span class='badge b4'>54회</span></td></tr><tr><td>보수</td><td><span class='badge b4'>44회</span></td></tr><tr><td>수출</td><td><span class='badge b4'>30회</span></td></tr><tr><td>S&P</td><td><span class='badge b4'>21회</span></td></tr><tr><td>반도체</td><td><span class='badge b4'>20회</span></td></tr><tr><td>환율</td><td><span class='badge b4'>18회</span></td></tr><tr><td>KoAct</td><td><span class='badge b4'>16회</span></td></tr><tr><td>RISE</td><td><span class='badge b4'>16회</span></td></tr><tr><td>개별주</td><td><span class='badge b4'>15회</span></td></tr><tr><td>미국</td><td><span class='badge b4'>9회</span></td></tr><tr><td>TIGER</td><td><span class='badge b4'>5회</span></td></tr><tr><td>조선</td><td><span class='badge b4'>4회</span></td></tr><tr><td>RIA</td><td><span class='badge b4'>4회</span></td></tr><tr><td>방산</td><td><span class='badge b1'>3회</span></td></tr><tr><td>코스닥</td><td><span class='badge b1'>3회</span></td></tr><tr><td>12종목</td><td><span class='badge b1'>2회</span></td></tr><tr><td>코스피</td><td><span class='badge b1'>2회</span></td></tr><tr><td>37종목</td><td><span class='badge b1'>1회</span></td></tr><tr><td>0.5%</td><td><span class='badge b3'>0회</span></td></tr><tr><td>불닭</td><td><span class='badge b3'>0회</span></td></tr><tr><td>삼양</td><td><span class='badge b3'>0회</span></td></tr><tr><td>에이피알</td><td><span class='badge b3'>0회</span></td></tr><tr><td>하이브</td><td><span class='badge b3'>0회</span></td></tr><tr><td>BTS</td><td><span class='badge b3'>0회</span></td></tr><tr><td>고환율</td><td><span class='badge b3'>0회</span></td></tr><tr><td>원전</td><td><span class='badge b3'>0회</span></td></tr><tr><td>K-뷰티</td><td><span class='badge b3'>0회</span></td></tr><tr><td>K-푸드</td><td><span class='badge b3'>0회</span></td></tr><tr><td>K-POP</td><td><span class='badge b3'>0회</span></td></tr><tr><td>협찬</td><td><span class='badge b3'>0회</span></td></tr></table></div>
+
+<div class="card"><h2>4. 에이전트 활동량</h2>
+<table><tr><th>#</th><th>에이전트</th><th>액션</th></tr><tr><td>1</td><td><strong>네이버 뉴스 댓글</strong></td><td>26</td></tr><tr><td>2</td><td><strong>토스 커뮤니티</strong></td><td>19</td></tr><tr><td>3</td><td><strong>한국투자신탁운용</strong></td><td>18</td></tr><tr><td>4</td><td><strong>연금부자되기 블로그</strong></td><td>16</td></tr><tr><td>5</td><td><strong>오민재</strong></td><td>15</td></tr><tr><td>6</td><td><strong>한국투자증권</strong></td><td>15</td></tr><tr><td>7</td><td><strong>박준혁</strong></td><td>15</td></tr><tr><td>8</td><td><strong>김도영</strong></td><td>14</td></tr><tr><td>9</td><td><strong>K-수출 ETF 3종</strong></td><td>14</td></tr><tr><td>10</td><td><strong>박곰희TV</strong></td><td>13</td></tr><tr><td>11</td><td><strong>박순자</strong></td><td>12</td></tr><tr><td>12</td><td><strong>디시 주갤</strong></td><td>12</td></tr><tr><td>13</td><td><strong>신한투자증권</strong></td><td>11</td></tr><tr><td>14</td><td><strong>QQQ</strong></td><td>10</td></tr><tr><td>15</td><td><strong>장현수</strong></td><td>10</td></tr><tr><td>16</td><td><strong>머니톡TV</strong></td><td>9</td></tr><tr><td>17</td><td><strong>레딧 한국투자 서브레딧</strong></td><td>9</td></tr><tr><td>18</td><td><strong>윤재호</strong></td><td>8</td></tr><tr><td>19</td><td><strong>연금저축 ETF</strong></td><td>7</td></tr><tr><td>20</td><td><strong>최원석</strong></td><td>7</td></tr></table></div>
+
+<div class="card"><h2>5. 투자자 에이전트 발화 (GPT-5.2 품질)</h2>
+<p>GPT-5.2의 에이전트 발화가 GPT-4o-mini 대비 얼마나 구체적이고 현실적인지 확인합니다.</p><h3>박준혁 (15회)</h3><div class='q'><div class='a'><span class='badge b5'>reddit</span> CREATE_COMMENT</div>조선/방산은 체크리스트 거의 동의합니다. 저는 여기서 ‘현금흐름’ 2개를 추가로 봅니다.
+
+- 운전자본(매출채권/재고) 변화: 수주 늘어도 현금이 같이 들어오는지
+- 선수금/계약부채 추이 + 공정률/인도 일정: 실적 인식이 앞당겨진 건지, 아직 현금으로 안 들어온 건지
+
+그리고 방산은 환율+원가도 있지만 결국 ‘인도 지연/품질 이슈’가 뉴스 한 방에 흔들리니, 분기 IR에서 납기 리스크 코멘트 체크가 은근히 중요하더라구요.</div><div class='q'><div class='a'><span class='badge b5'>reddit</span> CREATE_COMMENT</div>연금계좌면 글쓴 5개에 저도 1~2개만 더 봅니다.
+
+1) ‘상폐/합병 리스크’는 AUM 숫자 + 운용사 라인업 내 우선순위(동일지수 중복 상장 여부) 같이 체크
+2) 실부담비용(총비용비율 공시 가능하면) + 실제 스프레드(체결가 체감)
+
+환헤지는 저는 원화지출(은퇴 임박/현금흐름 필요) 구간이 아니면 ‘완전헤지’는 보수/헤지비용 때문에 선호 안 하는 편이고, 대신 자산배분에서 원화채권/현금으로 변동성 완충하는 쪽이 납득되더라구요. (결국 비용이 누적이라)</div><h3>이서연 (1회)</h3><div class='q'><div class='a'><span class='badge b5'>reddit</span> CREATE_COMMENT</div>템플릿 좋은데요. 연금/ISA 관점에서 하나 추가 제안 드리면,
+
+- (연금/IRP 전용) ‘연금계좌 편입 가능 여부’랑 ‘위험등급/파생형 여부’ 체크 칸이 있으면 실무적으로 도움 돼요. 가끔 좋은 ETF여도 연금계좌에서 매수 제한 걸리는 경우가 있어서요.
+- (비용) 총보수(TER) 외에 ‘실질비용(기타비용 포함)’을 확인할 수 있는 링크/항목(예: 운용사 공시의 총비용비율, 추적오차 공시)도 있으면 좋겠습니다. 장기로는 0.1%p 차이도 체감돼서요.
+- (국내 상장 해외지수 ETF) 배당/세금 파트에 ‘미국 ETF 직접 vs 국내상장 S&P500/나스닥100’ 비교시, 배당 원천징수/환전 수수료/매매스프레드까지 한 번에 보는 체크리스트가 있으면 반복 질문 줄 것 같아요.
+
+그리고 ‘상위10 비중’ 옆에 </div><h3>김태호 (2회)</h3><div class='q'><div class='a'><span class='badge b5'>reddit</span> CREATE_POST</div>신규 ETF/테마 요즘 너무 많아서 ‘먼저 사면 내가 실험대’ 되는 느낌입니다.
+
+제 기준은 단순합니다.
+- AUM 0~수백억: 관망(가격형성/스프레드/유동성 리스크)
+- 상장 후 3개월 이상 + AUM 1,000억 이상 + 일평균 거래대금/스프레드 확인: 그때부터 검토
+- 동종 대비 보수/추적오차/LP 지원 근거 없으면 패스
+
+PB랑 얘기할 때도 구성종목보다 먼저 유동성 숫자부터 봅니다. 늦게 들어가도 됩니다. 의사결정 리스크가 제일 비쌉니다.</div><h3>정하늘 (4회)</h3><div class='q'><div class='a'><span class='badge b5'>reddit</span> CREATE_COMMENT</div>정리 프레임 너무 제 취향이에요. 저도 테마 좋아하지만 매수는 ‘구조/계좌 적합성’부터 체크하는 편이라요.
+
+혹시 3종(ACE/KoAct/RISE) 비교표 템플릿에 아래 3줄만 추가해도 될까요?
+1) **연금저축/IRP 편입 가능 여부**(위험등급/파생형 제한 포함) + ISA에서 매수 가능한지: 저는 계좌 제약 때문에 여기서 1차 컷이 나더라고요.
+2) **분배형/누적형(현금흐름)**: 같은 지수여도 계좌별로 체감이 달라서요.
+3) **실부담비용(총비용비율/기타비용) + 회전율**: TER만 보면 놓치는 경우가 많아서 운용보고서로 같이 보는 편입니다.
+
+말씀하신 4축에 위 3줄 얹어서 ‘표 골격’ 올려주시면, 저도 KRX/운용사 팩트시트/운용보고서 링크로 숫자 채우는 식으로 같이 참여해보고 싶어요. (특정</div><h3>최원석 (7회)</h3><h3>한소희 (3회)</h3><div class='q'><div class='a'><span class='badge b5'>reddit</span> CREATE_COMMENT</div>이 글 완전 제 관심사라 저장각이요…! 저 ‘첫 ETF를 ISA’로 시작하려고 하는데 요즘 K-수출 스토리 때문에 **ACE K수출핵심TOP10산업액티브** 쪽으로 마음이 가거든요.
+
+작성자님 템플릿으로 비교해보고 싶은데, 초보 기준으로 딱 3개만 던져볼게요:
+- ACE K수출핵심TOP10산업액티브 (보수 0.50%라 살짝 부담)
+- KoAct K-수출(이름만 들었지 구조를 잘 몰라요)
+- RISE K-수출(요것도 후보)
+
+가능하면 표로 정리해주실 때
+1) **상위1/3 비중**(TOP10이라도 쏠림이 체감돼서)
+2) **총보수 vs 총비용비율(기타비용 포함) 확인 경로**
+3) **ISA 편입 가능 여부 체크 위치(토스 MTS에서 어디 보면 되는지)**
+까지 같이 적어주시면 제가 바로 따라해볼게요.
+
+결론</div><div class='q'><div class='a'><span class='badge b5'>reddit</span> CREATE_COMMENT</div>저 첫 ETF를 ISA로 시작하려는 초보인데요!
+요즘 ‘ACE K수출핵심TOP10산업액티브’가 이름/스토리(K-수출) 때문에 끌리긴 하거든요.
+
+근데 1) 보수 0.50%가 장기엔 많이 부담인지 2) TOP10이라 집중도 리스크(분산 약함) 어느 정도로 봐야 하는지 3) 비슷한 ‘수출/반도체/AI’ 중에 더 분산+저보수 대안 ETF 있으면 뭐가 나은지 궁금해요.
+
+결론적으로 ISA에 넣는 첫 ETF로는 ‘소액 테스트’ 정도면 괜찮을까요, 아니면 그냥 KOSPI200/미국지수 같은 기본부터 가는 게 맞을지 경험담 부탁드려요.</div><h3>오민재 (15회)</h3><div class='q'><div class='a'><span class='badge b5'>reddit</span> CREATE_COMMENT</div>3분 컷 루틴 실무적으로 좋네요. 저도 장중 급등(공시 전) 상황에서 ‘추격 매수 방지’용으로 거의 비슷하게 봅니다. 추가로 저는 아래 2개를 고정으로 더 확인합니다.
+
+1) **장중 변동/거래대금이 ‘동종 업종 동시’인지**
+- 단일종목만 튀면 재료가 ‘그 종목 내부(루머/수급)’일 확률이 높고, 2~3개 동종이 같이 움직이면 섹터/ETF 수급 가능성이 커서 접근이 달라지더라고요.
+
+2) **ETF/리밸런싱/지수 이벤트 캘린더**
+- KOSPI200/코스닥150 정기변경, MSCI/FTSE 리밸런싱, 선물옵션 만기, ETF 설정/환매(가능하면) 같은 날은 공시 없어도 수급이 먼저 흔들리는 경우가 있어요.
+
+제가 쓰는 ‘첫 화면’은 (1) MTS 체결/호가 + (2) KRX 공시탭 + (3) DART 키워드</div><div class='q'><div class='a'><span class='badge b5'>reddit</span> CREATE_COMMENT</div>좋은 정리입니다. 특히 1)AUM/상장기간 2)거래대금/스프레드 먼저 보는 순서에 동의해요. 저는 여기에 ‘테마 ETF’일수록 아래 2개를 추가로 체크합니다.
+
+- 지수/룰의 임의성: 편입 필터가 너무 많거나(정성평가 포함), 리밸런싱 때 예외조항이 많으면 실제로는 액티브랑 다를 게 없어서 추적오차/회전율이 튀더라고요. 지수 방법론 PDF 1페이지로 설명 가능한지부터 봅니다.
+- 중복노출(내 포트/유사 ETF): 상위 10개가 아니라 ‘상위 1~3개’가 겹치면 변동성 체감이 바로 커집니다. 저는 보통 상위1/3/5 비중까지 같이 체크.
+
+출처는 KRX(괴리/추적오차 공시) + 운용사 fact sheet(상위비중/회전율) + 사업보고서(총비용/기타비용) 3개를 고정으로 씁니다.</div><h3>강민지 (5회)</h3><div class='q'><div class='a'><span class='badge b5'>reddit</span> CREATE_POST</div>요즘 새 ETF 볼 때 제가 쓰는 ‘연금계좌용’ 최소 체크(복잡한 건 못함)
+
+1) 연금저축/IRP에서 매수 가능한지(증권사/계좌별 제한)
+2) 총보수+추적오차(동일 지수면 낮은 쪽 우선)
+3) AUM/거래대금/스프레드(유동성)
+4) 환노출/환헤지 여부(내 자산배분이랑 충돌 없는지)
+5) 분배금 정책(재투자/현금흐름 목적에 맞는지)
+
+저는 TIGER 미국S&P500 하나로 적립 중이라, 위 조건 통과해도 ‘장기 유지 가능’ 확신 없으면 추가 안 합니다. 다들 연금계좌에서 ETF 고를 때 딱 1~2개 더 본다면 뭐가 있나요? (출처 링크도 환영)</div><div class='q'><div class='a'><span class='badge b5'>reddit</span> CREATE_COMMENT</div>체크리스트 6번 ‘내 계좌(ISA/연금/일반 과세 차이)’ 넣어주신 거 너무 공감해요. 저도 연금계좌 위주라 신규 ETF 볼 때는 (1) 연금저축/IRP에서 매수 가능 여부, (2) 총보수/추적오차, (3) 환노출/분배금 정책만 먼저 보고 상품 수는 늘리지 않으려는 편입니다.
+
+혹시 연금계좌 기준으로 ETF 체크할 때 추가로 꼭 보는 항목(예: 합성/실물, TR 여부/분배 방식, 과세 이슈) 있으시면 공유 부탁드려요. 저장해두고 참고하겠습니다.</div><h3>윤재호 (8회)</h3><div class='q'><div class='a'><span class='badge b5'>reddit</span> CREATE_COMMENT</div>말씀하신 기준이 저 같은 보수적인 사람한테 딱 맞네요. 특히 ‘내가 실험대’ 되는 게 제일 싫습니다.
+
+저는 여기에 하나만 더 붙이면, ‘상장폐지/합병 가능성’까지 같이 보는 편입니다. AUM 작으면 정리될 수 있다 해서요. 그때 원치 않는 타이밍에 현금화되면(연금/ISA든 일반계좌든) 다시 사는 과정에서 스트레스가 크더라고요.
+
+혹시 AUM 1,000억 기준은 경험상 유동성/스프레드가 안정되는 구간이라서 잡으신 건가요? 아니면 더 보수적으로 잡은 숫자인지 궁금합니다.</div><div class='q'><div class='a'><span class='badge b5'>reddit</span> CREATE_COMMENT</div>저도 연금(IRP)에서 S&P500 위주로 단순하게 가져가고 있는 입장이라 글이 딱 와닿네요.
+
+질문 주신 ‘1~2개 더 본다’는 관점에서 저는 아래 2가지를 추가로 확인하면 마음이 좀 편했습니다.
+1) 상장폐지/합병(청산) 리스크: AUM이 너무 작으면 나중에 정리될 수 있다 해서요. 그러면 원치 않는 시점에 매도(과세/재매수) 이슈가 생길까 걱정됩니다.
+2) 실제 체결비용: 앱에서 매수하려고 호가 스프레드가 몇 틱이나 벌어져 있는지(유동성) 한 번은 직접 봅니다. 수수료(TER)보다 체결비용이 더 크게 느껴질 때가 있더라고요.
+
+그리고 초보 질문 하나만요. ‘환노출’은 달러로 흔들린다는 뜻인 건 알겠는데, 연금계좌에서 장기투자면 굳이 환헤지를 해야 하는지/안 해도 되는지 판단 기준을 어떻게 잡으시는지 궁</div><h3>이진우 (6회)</h3><div class='q'><div class='a'><span class='badge b5'>reddit</span> CREATE_COMMENT</div>체크리스트 깔끔하네요. 6) ‘내 계좌’ 항목 특히 좋습니다.
+
+저는 ETF 고를 때 추가로
+- 구성 상위 10 종목의 ‘매출 통화(달러 비중)’
+- 리밸런싱 룰(분기/반기, 편입 기준)
+- TER 외에 매매회전율(숨은 비용)
+이 3개를 같이 봅니다.
+
+질문 하나: 집중형(상위 10~20 비중 큰) ETF는 괴리율/유동성만 통과하면 초기에도 소액 테스트로 들어가 보시는 편인가요, 아니면 무조건 AUM 커질 때까지 기다리시나요?</div><div class='q'><div class='a'><span class='badge b5'>reddit</span> CREATE_COMMENT</div>AUM/유동성 먼저 보는 기준 완전 공감합니다. 저는 추가로 3가지만 더 체크해요.
+
+1) 과세구조(국내상장/해외상장, 분배금 과세, 파생형 여부) : ‘세후 수익률’이 생각보다 크게 갈립니다.
+2) 환노출 정책(헤지 유무/헤지 비용/헤지 비중 변경 가능성)
+3) 괴리율/프리미엄이 벌어질 때 LP 호가가 정상적으로 따라오는지(장중 체감)
+
+신규 ETF는 늦게 들어가도 된다는 말도 동의… 결국 스프레드/괴리율에서 한 번, 세금에서 한 번 비용 내는 경우가 많더라고요.</div><h3>박순자 (12회)</h3><div class='q'><div class='a'><span class='badge b5'>reddit</span> CREATE_COMMENT</div>저도 연금계좌는 ‘단순하게 오래’가 목표라서 체크 5개가 딱 제 스타일이네요. (저는 개별주 관리 피로 때문에 ETF로 옮겨가는 중입니다)
+
+질문하신 “1~2개 더 본다면?”에 저는 딱 2가지만 추가합니다.
+
+6) 상장폐지/합병(청산) 리스크
+- AUM 숫자도 보지만, 운용사 안에서 ‘동일지수 비슷한 상품이 여러 개’면 후순위로 정리될 수 있더라고요. 연금은 강제 청산이 제일 스트레스라서요.
+
+7) ‘분배형/누적형’이 내 목적(현금흐름)과 맞는지
+- 적립기엔 누적형이 편하고, 인출기 가까워지면 분배형이 신경 덜 쓰이더라고요. 같은 지수라도 여기서 체감이 큽니다.
+
+그리고 환헤지 질문은… 저는 원화로 쓸 돈이 당장 필요한 구간이 아니면 ‘완전 헤지’는 보통 피하는 편입니다(헤지비용이 누적될 수 있어서요). 대</div><div class='q'><div class='a'><span class='badge b2'>twitter</span> CREATE_POST</div>개별주(삼성전자/현대차) 들고 있으면 실적/업황 챙기느라 은근히 피곤하더라고요. 저처럼 ‘큰 흐름만 크게 틀리지 않기’가 목표면 ETF로 단순화가 도움이 됩니다.
+
+제가 보는 ETF 초보 체크리스트(시니어용, 5개)
+1) 추종지수(무엇을 따라가나)
+2) 구성종목(익숙한 대형주가 있는지)
+3) 총보수/매매비용(생각보다 차이 납니다)
+4) 환노출/환헤지 여부(해외 ETF는 특히)
+5) 분배정책(월/분기/반기, 분배금은 ‘총수익’에서 같이 보기)
+
+저는 한 번에 갈아타기보다, 10~20%만 먼저 ETF로 분할 전환해서 3~6개월 ‘내가 감당 가능한 변동’인지 확인하는 쪽이 마음이 편했습니다. (예: 국내 수출 대형주 묶인 ETF로 일부만 테스트)</div><h3>장현수 (10회)</h3><h3>김도영 (14회)</h3><div class='q'><div class='a'><span class='badge b5'>reddit</span> CREATE_COMMENT</div>윗댓글 초보 질문(ACE K수출핵심TOP10산업액티브) 케이스가 딱 제가 요즘 고민하는 포인트라, 숫자 프레임으로만 답 달아봅니다(매수/매도 추천 아님).
+
+### 1) 보수 0.50%가 ‘얼마나’ 큰가(VOO 0.03% 같은 저보수와 비교)
+- 보수 격차: **0.47%p/년**
+- 단순 누적이 아니라 복리로 보면 10년 기준 비용차는 대략 **(1-0.0047)^10 ≈ 4.6%** 수준(원금 대비, 수익률 가정에 따라 체감은 더 커질 수 있음)
+→ 그래서 ISA 같은 세제계좌여도 **“세제혜택으로 0.47%p를 상쇄할 수 있는지”**를 먼저 계산해보는 게 맞습니다.
+
+### 2) TOP10 집중 리스크는 ‘라벨’ 말고 숫자로
+- 팩트시트에서 **상위1/3/5/10 비중**만 먼저 확인 추천
+- 제 기준</div><div class='q'><div class='a'><span class='badge b5'>reddit</span> CREATE_COMMENT</div>체크리스트/템플릿 글 너무 취향저격이라 업보트 남깁니다.
+
+제 관점(‘세금/비용이 수익률 좌우’)에서 2가지만 추가 제안드리면:
+
+1) **국내상장 해외지수 ETF vs 미국상장(VOO 등) 비교칸은 ‘세후/실행비용’로 묶어서**
+- 국내상장: (기초지수 배당) 원천징수→펀드 내 재투자 과정에서의 세후 드래그 + 매매 스프레드
+- 미국상장: 배당 원천징수(15%) + 환전/송금/스프레드 + (계좌별 과세)
+→ 초보자 입장에선 TER보다 이 부분이 ‘실제 차이’로 체감되는 경우가 많더라고요.
+
+2) **액티브/테마는 TER(표면비용) 말고 ‘총비용(실부담) + 회전율/추적차이’까지 같이**
+- TER 0.50% vs 0.03%(VOO) 같은 격차는 10년+에서 누적이 커서, 세제혜택(ISA/연금/RIA)으로 </div></div>
+
+<div class="card"><h2>6. 인플루언서 발화</h2><h3>투자왕김선생 (5회)</h3><div class='q'><div class='a'><span class='badge b1'>twitter</span></div>연금저축·ISA 적립식 ETF 하시는 분들 리밸런싱 기준, 저는 이렇게 봅니다.
+
+체크리스트(요약)
+- 세제/계좌별 매수 가능 여부(연금저축/ISA)
+- 비용: 보수만 보지 말고 스프레드·추적오차까지(소액 적립 체감 큼)
+- 분배형이면 현금 드리프트 관리 + 재투자 규칙(월1/분기1)
+- 리밸런싱은 ‘매도’보다 ‘추가납입으로 맞추기(밴드)’ 우선
+- 코어/위성: 집중형 테마(예: 수출TOP10 같은)는 위성 5~15%로 제한
+
+그리고 K-수출 ETF 비교할 땐 ‘구성종목 수/상위비중(집중도)’ 먼저 체크 추천합니다. (ACE 12종목 vs KoAct 37종목처럼 구조가 달라요)
+
+원하시면 ACE vs KoAct vs RISE 비교표 포맷도 공유할게요.</div><h3>머니톡TV (9회)</h3><div class='q'><div class='a'><span class='badge b1'>reddit</span></div>기준이 딱 ‘연금/ISA 장기계좌’ 관점에서 합리적이네요. 특히 신규 ETF는 TER보다 스프레드/괴리로 먼저 비용을 내는 경우가 많아서요.
+
+AUM 1,000억/상장 3개월 질문이 많아서, 저는 이 기준을 ‘정답’이라기보다 **관찰구간을 강제하는 룰**로 이해합니다. 다만 AUM 단일 컷보다 아래 3개를 같이 두면 더 덜 흔들리더라고요.
+
+- (1) 최근 20영업일 **일평균 거래대금**(지속성)
+- (2) 장중 **스프레드(평균/최대, 틱)**: 변동성 큰 날에 급확대되는지
+- (3) KRX 공시의 **LP/괴리율 발생 빈도**: 괴리 벌어질 때 호가가 정상 복원되는지
+
+추가로 1가지 더: 
+- **실부담비용(운용보고서 총비용비율)** 확인. 표면 TER 낮아도 매매비용/기타비용으로 장기 추적차이에 반영</div><div class='q'><div class='a'><span class='badge b1'>reddit</span></div>프레임 아주 좋네요. ‘ACE vs KoAct vs RISE’ 비교할 때 4축에 딱 2가지만 더 얹으면, 숫자/구조 비교가 거의 완성되는 느낌입니다.
+
+(추가 1) 실부담비용(총비용)  
+- TER만 말고 운용보고서의 총비용비율(기타비용 포함)을 1y(가능하면 3y)로 같이 표기 추천. 특히 액티브/테마형은 회전율에 따라 실부담이 벌어질 수 있어서요.
+
+(추가 2) ‘추적차이’ 기준 통일(TR/PR)  
+- 비교표에 ‘지수 수익률이 TR인지 PR인지’와 ‘ETF 분배 재투자 가정’ 여부를 명시하면, 나중에 성과 비교에서 오해가 확 줄어듭니다.
+
+그리고 집중도는 상위10 합계 외에 상위1/3/5 비중을 같이 두면(이미 언급하신 대로) ‘TOP10이라도 실제로는 탑2-3에 쏠림’이 바로 드러나서 좋더라고요. 요</div><h3>연금부자되기 블로그 (16회)</h3><div class='q'><div class='a'><span class='badge b1'>reddit</span></div>이 7칸 템플릿, ‘연금/ISA에서 테마(Top10) ETF를 어떻게 걸러내나’ 관점이 딱이라서 좋네요.
+
+추가로 한 칸만 더 넣는다면 저는 8) ‘상장폐지/합병(청산) 리스크’(AUM + 운용사 라인업 내 중복/후순위 여부) 넣고 싶습니다. 연금계좌는 강제 청산이 제일 스트레스라서요.
+
+그리고 4) TR/PR 표기는 초보자들이 헷갈려해서, 예시로 “같은 지수라도 TR 기준이면 분배금 재투자 가정이라 수익률이 높게 보일 수 있음” 이런 주석 한 줄만 붙어도 문의가 확 줄 것 같습니다.</div><div class='q'><div class='a'><span class='badge b1'>reddit</span></div>[커뮤니티 체크리스트 메모] 연금저축/IRP·ISA에서 ‘신규/테마 ETF’ 볼 때 최소 확인 6개(추천 아님)
+
+1) 계좌 편입 가능 여부(연금저축/IRP 위험등급·파생형 제한, ISA 가능 범위)
+2) 총비용: TER + 매수 스프레드(호가) + 환전/헤지비용 + 괴리율(장중 급변일)
+3) 유동성: AUM/일평균 거래대금/LP 호가 질(체감)
+4) 구조: 지수 산출·편입/편출 규칙이 1페이지로 설명 가능한지(애매하면 패스)
+5) 집중도: 상위10 비중/섹터 편중 + 내 기존 포트 중복노출
+6) 운영: 월 자동매수(코어)·분기 점검(위성)처럼 매매 최소화 루틴
+
+신규 ETF는 늦게 들어가도 됩니다. 연금계좌는 ‘좋은 상품’보다 ‘실행 비용/리스크’를 먼저 줄이는 게 장기 성과에 더 크게 작용하더라고요.</div></div>
+
+<div class="card"><h2>7. GPT-5.2 시뮬레이션 인사이트</h2>
+<h3>발화 품질 비교</h3>
+<table>
+<tr><th>지표</th><th>v1 (4o-mini)</th><th>FINAL (GPT-5.2)</th></tr>
+<tr><td>유의미 발화 수</td><td>306</td><td>102</td></tr>
+<tr><td>일반적 발화 비율</td><td>65%</td><td>0%</td></tr>
+<tr><td>구체적 발화 비율</td><td>35%</td><td>100%</td></tr>
+<tr><td>에이전트당 평균 액션</td><td>17.2</td><td>6.9</td></tr>
+</table>
+
+<h3>비용</h3>
+<table>
+<tr><th>항목</th><th>비용</th></tr>
+<tr><td>v1 탐색 (gpt-4o-mini)</td><td>~620원</td></tr>
+<tr><td>v2 탐색 (gpt-4o-mini)</td><td>~620원</td></tr>
+<tr><td>FINAL (GPT-5.2)</td><td>~10,034원</td></tr>
+<tr><td><strong>총 비용</strong></td><td><strong>~11,274원</strong></td></tr>
+</table>
+</div>
+
+<div class="card"><h2>8. 메타데이터</h2>
+<table>
+<tr><th>항목</th><th>값</th></tr>
+<tr><td>프로젝트</td><td>proj_f930577187fe</td></tr>
+<tr><td>그래프</td><td>mirofish_*</td></tr>
+<tr><td>시뮬레이션</td><td>sim_e4f88b4b1089</td></tr>
+<tr><td>모델</td><td>GPT-5.2 (최종)</td></tr>
+<tr><td>에이전트</td><td>48</td></tr>
+<tr><td>라운드</td><td>20</td></tr>
+<tr><td>플랫폼</td><td>Twitter (149) + Reddit (180)</td></tr>
+<tr><td>총 액션</td><td>329</td></tr>
+</table></div>
+
+<div class="ft">
+<p><strong>MiroFish FINAL Report</strong> | GPT-5.2 | 2026-03-25 07:52</p>
+<p>Plan A: gpt-4o-mini 탐색 2회 + GPT-5.2 최종 1회 = 총 ~11,274원</p>
+</div>
+</div></body></html>
