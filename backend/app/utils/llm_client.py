@@ -51,14 +51,21 @@ class LLMClient:
         Returns:
             모델 응답 텍스트
         """
+        # GPT-5 이상 모델 호환 처리
+        is_new_model = self.model.startswith(("gpt-5", "o3", "o4"))
+        token_param = "max_completion_tokens" if is_new_model else "max_tokens"
         kwargs = {
             "model": self.model,
             "messages": messages,
-            "temperature": temperature,
-            "max_tokens": max_tokens,
+            token_param: max_tokens,
         }
+        # GPT-5 mini/nano는 temperature 커스텀 미지원
+        if not (is_new_model and ("mini" in self.model or "nano" in self.model)):
+            kwargs["temperature"] = temperature
         
         if response_format:
+            # GPT-5 mini/nano는 json_object 대신 json_schema 또는 미지원일 수 있음
+            # 안전하게 시도하되 실패하면 response_format 없이 재시도
             kwargs["response_format"] = response_format
         
         response = self.client.chat.completions.create(**kwargs)
