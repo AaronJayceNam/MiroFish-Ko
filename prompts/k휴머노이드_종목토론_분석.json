@@ -1,0 +1,380 @@
+{
+  "현대차": {
+    "name": "현대차",
+    "naver": {
+      "total_posts": 100,
+      "avg_views": 63,
+      "total_pos": 354,
+      "total_neg": 105,
+      "sentiment_ratio": 0.77,
+      "sentiment_label": "긍정 우위",
+      "top_by_views": [
+        {
+          "title": "갑자기 현차만 튀는 이유가 뭐에요[3]",
+          "views": 690,
+          "pos": 5,
+          "neg": 2
+        },
+        {
+          "title": "곧 공장 셧다운 할거 같던데[1]",
+          "views": 228,
+          "pos": 1,
+          "neg": 6
+        },
+        {
+          "title": "467000에 손절했습니다[2]",
+          "views": 209,
+          "pos": 2,
+          "neg": 5
+        },
+        {
+          "title": "분기 배당이 오늘까지 매수임.[1]",
+          "views": 208,
+          "pos": 5,
+          "neg": 2
+        },
+        {
+          "title": "뭔데 갑자기 오르지?[2]",
+          "views": 177,
+          "pos": 0,
+          "neg": 1
+        }
+      ],
+      "top_by_pos": [
+        {
+          "title": "오늘 종가 51만원[3]",
+          "views": 125,
+          "pos": 28
+        },
+        {
+          "title": "유호홋[1]",
+          "views": 87,
+          "pos": 18
+        },
+        {
+          "title": "삼전 하닉 주주로서 진짜 너무 부럽다[1]",
+          "views": 157,
+          "pos": 16
+        }
+      ]
+    },
+    "toss": {},
+    "weight": 20.0,
+    "ticker": "005380"
+  },
+  "로보티즈": {
+    "name": "로보티즈",
+    "naver": {
+      "total_posts": 99,
+      "avg_views": 30,
+      "total_pos": 168,
+      "total_neg": 54,
+      "sentiment_ratio": 0.76,
+      "sentiment_label": "긍정 우위",
+      "top_by_views": [
+        {
+          "title": "17000언에 샀는데 어떻게 해야 하나요[6]",
+          "views": 249,
+          "pos": 0,
+          "neg": 3
+        },
+        {
+          "title": "내몸에 악마가 들어온 날[4]",
+          "views": 180,
+          "pos": 5,
+          "neg": 0
+        },
+        {
+          "title": "휴 손절깐거 다시복구했네 ㅜ",
+          "views": 135,
+          "pos": 2,
+          "neg": 0
+        },
+        {
+          "title": "프매 개웃기네",
+          "views": 102,
+          "pos": 1,
+          "neg": 0
+        },
+        {
+          "title": "오늘 당근에...[1]",
+          "views": 63,
+          "pos": 3,
+          "neg": 3
+        }
+      ],
+      "top_by_pos": [
+        {
+          "title": "크게 간다 투표 해보자",
+          "views": 54,
+          "pos": 13
+        },
+        {
+          "title": "손절합니다.",
+          "views": 44,
+          "pos": 9
+        },
+        {
+          "title": "결국 11시에 올린것도 개미태워서 죽이려고 올린...[1]",
+          "views": 51,
+          "pos": 7
+        }
+      ]
+    },
+    "toss": {},
+    "weight": 20.0,
+    "ticker": "108860"
+  },
+  "레인보우로보틱스": {
+    "name": "레인보우로보틱스",
+    "naver": {
+      "total_posts": 99,
+      "avg_views": 39,
+      "total_pos": 184,
+      "total_neg": 56,
+      "sentiment_ratio": 0.77,
+      "sentiment_label": "긍정 우위",
+      "top_by_views": [
+        {
+          "title": "정배열에 단기급락은[1]",
+          "views": 118,
+          "pos": 6,
+          "neg": 0
+        },
+        {
+          "title": "이정호 사법리스크로  회사가치 최소 7조 이상 ...",
+          "views": 112,
+          "pos": 3,
+          "neg": 2
+        },
+        {
+          "title": "단기 급락 후 120일선 근처에서",
+          "views": 104,
+          "pos": 5,
+          "neg": 0
+        },
+        {
+          "title": "오늘 양전 된다[1]",
+          "views": 99,
+          "pos": 4,
+          "neg": 0
+        },
+        {
+          "title": "야드라~[2]",
+          "views": 98,
+          "pos": 0,
+          "neg": 2
+        }
+      ],
+      "top_by_pos": [
+        {
+          "title": "미국 중국산 로봇 금지 법안 발의",
+          "views": 83,
+          "pos": 7
+        },
+        {
+          "title": "어이가 없네",
+          "views": 53,
+          "pos": 7
+        },
+        {
+          "title": "주총 가는 사람은 무조건 무증하자고 혀라[1]",
+          "views": 49,
+          "pos": 6
+        }
+      ]
+    },
+    "toss": {},
+    "weight": 17.0,
+    "ticker": "277810"
+  },
+  "에스피지": {
+    "name": "에스피지",
+    "naver": {
+      "total_posts": 100,
+      "avg_views": 157,
+      "total_pos": 370,
+      "total_neg": 136,
+      "sentiment_ratio": 0.73,
+      "sentiment_label": "긍정 우위",
+      "top_by_views": [
+        {
+          "title": "이제 시간이 얼마 안남았다...[2]",
+          "views": 1101,
+          "pos": 6,
+          "neg": 6
+        },
+        {
+          "title": "궁금한게 있습니다[3]",
+          "views": 704,
+          "pos": 3,
+          "neg": 4
+        },
+        {
+          "title": "3ì›” ë§� ì•ˆì—�[4]",
+          "views": 659,
+          "pos": 10,
+          "neg": 7
+        },
+        {
+          "title": "외인은 포기 안하지만..",
+          "views": 600,
+          "pos": 10,
+          "neg": 1
+        },
+        {
+          "title": "계속 추매중. 외인과 같이.[5]",
+          "views": 590,
+          "pos": 5,
+          "neg": 1
+        }
+      ],
+      "top_by_pos": [
+        {
+          "title": "ë ˆì�¸ì�´ì£½ìœ¼ë‹ˆ ì—�ìŠ¤í”¼ì§€ë�„?ì¡°ë§Œê°„9ì§œ ë³´ì�´ê¸‹ë‹¤",
+          "views": 148,
+          "pos": 16
+        },
+        {
+          "title": "미국 백악관에도 폭탄 떨어져 몽땅 다 죽어...[6]",
+          "views": 259,
+          "pos": 15
+        },
+        {
+          "title": "외국인",
+          "views": 250,
+          "pos": 15
+        }
+      ]
+    },
+    "toss": {},
+    "weight": 12.2,
+    "ticker": "058610"
+  },
+  "두산로보틱스": {
+    "name": "두산로보틱스",
+    "naver": {
+      "total_posts": 99,
+      "avg_views": 237,
+      "total_pos": 343,
+      "total_neg": 253,
+      "sentiment_ratio": 0.58,
+      "sentiment_label": "중립",
+      "top_by_views": [
+        {
+          "title": "정말 고민입니다. 두산로보 매수 하고 싶은데 괜...[11]",
+          "views": 1396,
+          "pos": 12,
+          "neg": 17
+        },
+        {
+          "title": "AI ì „ë ¥ ë‹¤ì�Œë¨¹ê±°ë¦¬",
+          "views": 1026,
+          "pos": 10,
+          "neg": 2
+        },
+        {
+          "title": "매수타이밍.[2]",
+          "views": 1006,
+          "pos": 2,
+          "neg": 12
+        },
+        {
+          "title": "ì •ë§� ê³ ë¯¼ì�…ë‹ˆë‹¤. ë‘�ì‚°ë¡œë³´ ë§¤ìˆ˜ í•˜ê³  ì‹¶ì�€ë�° ...[8]",
+          "views": 957,
+          "pos": 6,
+          "neg": 11
+        },
+        {
+          "title": "이게 맞는거 맞아?[9]",
+          "views": 807,
+          "pos": 7,
+          "neg": 3
+        }
+      ],
+      "top_by_pos": [
+        {
+          "title": "오늘 1%오르면",
+          "views": 133,
+          "pos": 12
+        },
+        {
+          "title": "정말 고민입니다. 두산로보 매수 하고 싶은데 괜...[11]",
+          "views": 1396,
+          "pos": 12
+        },
+        {
+          "title": "ì�´ê²Œ ë­” ê°œì�¡ì£¼ì�¸ê°€..[4]",
+          "views": 666,
+          "pos": 11
+        }
+      ]
+    },
+    "toss": {},
+    "weight": 2.5,
+    "ticker": "454910"
+  },
+  "현대모비스": {
+    "name": "현대모비스",
+    "naver": {
+      "total_posts": 100,
+      "avg_views": 117,
+      "total_pos": 271,
+      "total_neg": 99,
+      "sentiment_ratio": 0.73,
+      "sentiment_label": "긍정 우위",
+      "top_by_views": [
+        {
+          "title": "배당금 입금일[3]",
+          "views": 938,
+          "pos": 1,
+          "neg": 2
+        },
+        {
+          "title": "보스턴 다이나믹스  소식",
+          "views": 578,
+          "pos": 16,
+          "neg": 2
+        },
+        {
+          "title": "보스턴다이나믹스가 나스닥 상장하면[4]",
+          "views": 573,
+          "pos": 4,
+          "neg": 2
+        },
+        {
+          "title": "트럼프 한달간 휴전하자..[2]",
+          "views": 560,
+          "pos": 9,
+          "neg": 3
+        },
+        {
+          "title": "보스턴 다이나믹스 미국 방산 협업 가능성[2]",
+          "views": 403,
+          "pos": 8,
+          "neg": 2
+        }
+      ],
+      "top_by_pos": [
+        {
+          "title": "보스턴 다이나믹스  소식",
+          "views": 578,
+          "pos": 16
+        },
+        {
+          "title": "너무 기특한 모비스",
+          "views": 121,
+          "pos": 12
+        },
+        {
+          "title": "묘비스 주주들 어리둥절",
+          "views": 141,
+          "pos": 12
+        }
+      ]
+    },
+    "toss": {},
+    "weight": 4.4,
+    "ticker": "012330"
+  }
+}
