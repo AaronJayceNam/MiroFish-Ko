@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8">
+<title>ACE K주도주 v4 · 17 후보 · 시장 컨텍스트 주입</title>
+<style>
+:root{--bg:#0b0d10;--card:#151a21;--line:#262d36;--text:#e6edf3;--muted:#8b949e;--accent:#58a6ff;--win:#3fb950;--bad:#f85149;--warn:#d29922;--gold:#f1c40f;--silver:#bdc3c7;--bronze:#cd7f32}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:'Segoe UI','Malgun Gothic',system-ui;line-height:1.6}
+.wrap{max-width:1220px;margin:0 auto;padding:36px 24px}
+h1{font-size:28px;margin:0 0 4px}h2{font-size:22px;margin:32px 0 12px;border-left:4px solid var(--accent);padding-left:12px}h3{font-size:17px;margin:16px 0 8px;color:var(--accent)}h4{margin:12px 0 4px;font-size:13px}
+.sub{color:var(--muted);font-size:14px;margin-bottom:20px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:18px 22px;margin:14px 0}
+table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:9px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{background:#1c2530;color:var(--muted);font-weight:600;font-size:12px}tr:hover td{background:#1c2530}
+.num{font-variant-numeric:tabular-nums;text-align:right}.big{font-size:17px;font-weight:700;color:var(--accent)}
+.name-cell{font-weight:600}
+.win,.pos{color:var(--win)}.bad,.neg{color:var(--bad)}.mute{color:var(--muted)}.up{color:var(--win);font-weight:700}.down{color:var(--bad);font-weight:700}
+.new{background:var(--accent);color:#0b0d10;padding:1px 6px;border-radius:3px;font-size:10px;font-weight:700;margin-right:4px}
+.rank-card h3 .rank{display:inline-block;width:52px;padding:4px 8px;border-radius:14px;font-size:13px;color:#0b0d10;font-weight:800;margin-right:8px}
+.rank-1{background:var(--gold)}.rank-2{background:var(--silver)}.rank-3{background:var(--bronze);color:#fff}
+.score-big{float:right;font-size:22px;color:var(--accent);font-weight:700}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:14px 0}.grid6{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin:14px 0}
+.meta-box{background:#1c2530;border:1px solid var(--line);border-radius:6px;padding:10px;text-align:center}.meta-label{font-size:11px;color:var(--muted)}.meta-val{font-size:20px;font-weight:700;color:var(--accent);margin-top:4px}
+ul{margin:4px 0;padding-left:18px}li{margin:2px 0;font-size:12.5px}
+.win-box{background:#1a3d24;border:1px solid #2d5c38;border-radius:6px;padding:12px 16px;margin:12px 0;color:#7ee2a8}
+.narrative{color:var(--text);font-size:13.5px;padding:10px 12px;background:#1c2530;border-left:3px solid var(--accent);margin:10px 0}
+.axis-bar{display:flex;gap:12px;margin:8px 0}.axis{flex:1}.axis span{font-size:12px;color:var(--muted);display:block;margin-bottom:3px}.bar{height:7px;background:#262d36;border-radius:3px;overflow:hidden}.bar i{display:block;height:100%;background:linear-gradient(90deg,#58a6ff,#3fb950)}.bar.mem i{background:linear-gradient(90deg,#d29922,#f1c40f)}.bar.pi i{background:linear-gradient(90deg,#f85149,#7ee2a8)}
+.scatter{position:relative;width:100%;height:520px;background:linear-gradient(to right,rgba(248,81,73,0.08) 50%,rgba(63,185,80,0.08) 50%),#0f1317;border:1px solid var(--line);border-radius:8px;margin:12px 0}
+.scatter::before{content:'';position:absolute;left:50%;top:0;bottom:0;width:1px;background:var(--line)}
+.scatter::after{content:'';position:absolute;top:50%;left:0;right:0;height:1px;background:var(--line)}
+.scatter .q-label{position:absolute;font-size:11px;color:var(--muted);font-weight:600}
+.scatter .q-tl{top:8px;left:8px}.scatter .q-tr{top:8px;right:8px;color:var(--win)}.scatter .q-bl{bottom:8px;left:8px;color:var(--bad)}.scatter .q-br{bottom:8px;right:8px;color:var(--warn)}
+.dot{position:absolute;width:12px;height:12px;border-radius:50%;border:2px solid #0b0d10;box-shadow:0 0 8px rgba(88,166,255,0.3)}
+.dot .label{position:absolute;left:16px;top:-2px;font-size:11px;white-space:nowrap;color:var(--text);background:rgba(21,26,33,0.9);padding:1px 5px;border-radius:3px}
+.footer{color:var(--muted);font-size:12px;margin-top:40px;padding-top:18px;border-top:1px solid var(--line)}
+.tier{display:grid;grid-template-columns:auto 1fr;gap:14px;margin:8px 0;align-items:center}
+.tier-badge{background:var(--accent);color:#0b0d10;padding:4px 10px;border-radius:4px;font-weight:700;font-size:12px;min-width:70px;text-align:center}
+.delta-row td{background:rgba(63,185,80,0.08);font-weight:600}
+a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+</style></head>
+<body><div class="wrap">
+<h1>🎯 ACE K주도주 이름 순위 v4</h1>
+<div class="sub">GPT-5.2 · 17 후보 (반도체조선방산플러스 등 신규 3종 추가) · 22 페르소나 × 374 데이터포인트 · 2026-04 시장 컨텍스트 웹 리서치 주입 · 2026-04-16 실행</div>
+
+<h2>① 실행 요약</h2>
+<div class="card">
+<div class="grid6">
+<div class="meta-box"><div class="meta-label">모델</div><div class="meta-val" style="font-size:15px">gpt-5.2</div></div>
+<div class="meta-box"><div class="meta-label">페르소나</div><div class="meta-val">22</div></div>
+<div class="meta-box"><div class="meta-label">후보</div><div class="meta-val">17</div></div>
+<div class="meta-box"><div class="meta-label">데이터</div><div class="meta-val">374</div></div>
+<div class="meta-box"><div class="meta-label">신규</div><div class="meta-val">3</div></div>
+<div class="meta-box"><div class="meta-label">출처 URL</div><div class="meta-val">7+</div></div>
+</div>
+<p><strong>v3 대비 변경:</strong> (a) 신규 후보 3개 추가 — 반도체조선방산플러스·반도체조선방산+·반도체자동차조선+, (b) 2026-04 시장 데이터 웹 리서치로 시드 보강(조방원 슈퍼사이클, PLUS K방산 +182%, HBM 546억$, 광반도체, 토스 AI시그널 등), (c) 22 페르소나로 확대.</p>
+</div>
+
+<div class="win-box">
+<strong>🏆 핵심 결과 — 조방원 조합이 시장 승자</strong><br>
+신규 후보 <strong>반도체조선방산플러스</strong>가 22명 중 21명 BEST3 선택(<strong>95% 만장일치</strong>), 종합 7.46으로 1위. 신규 후보 <strong>반도체조선방산+</strong>가 7.42로 근소 2위. 자동차 포함 조합(v3 1·4위)을 방산 포함 조합이 역전. 시장 리서치로 주입된 <strong>"조방원 슈퍼사이클" 실증 데이터</strong>가 에이전트 판단에 결정적 영향.
+</div>
+
+<h2>② 최종 순위 (17 후보)</h2>
+<div class="card">
+<table>
+<thead><tr><th>#</th><th>후보명</th><th>종합</th><th>FI</th><th>MEM</th><th>PI</th><th>Best</th><th>Worst</th><th>v3</th><th>변동</th><th>사분면</th><th>플래그</th></tr></thead>
+<tbody><tr>
+<td class="num">1</td><td class="name-cell"><span class="new">NEW</span> 반도체조선방산플러스</td>
+<td class="num big">7.46</td><td class="num">8.0</td><td class="num">7.23</td><td class="num">7.41</td>
+<td class="num pos">21</td><td class="num neg">0</td>
+<td class="num">-</td><td><span class="new">NEW</span></td>
+<td style="color:#3fb950">QII</td><td>🏆 정식명</td>
+</tr><tr>
+<td class="num">2</td><td class="name-cell"><span class="new">NEW</span> 반도체조선방산+</td>
+<td class="num big">7.42</td><td class="num">7.64</td><td class="num">7.77</td><td class="num">6.95</td>
+<td class="num pos">17</td><td class="num neg">0</td>
+<td class="num">-</td><td><span class="new">NEW</span></td>
+<td style="color:#3fb950">QII</td><td>🥈 대체안</td>
+</tr><tr>
+<td class="num">3</td><td class="name-cell">반차조방원</td>
+<td class="num big">6.63</td><td class="num">6.14</td><td class="num">8.27</td><td class="num">5.23</td>
+<td class="num pos">8</td><td class="num neg">3</td>
+<td class="num">3</td><td><span class="mute">–</span></td>
+<td style="color:#d29922">QI</td><td>🥉 / 📱 숏폼</td>
+</tr><tr>
+<td class="num">4</td><td class="name-cell">K5대산업 정예TOP10</td>
+<td class="num big">6.31</td><td class="num">6.55</td><td class="num">6.64</td><td class="num">5.86</td>
+<td class="num pos">3</td><td class="num neg">0</td>
+<td class="num">8</td><td><span class="up">▲4</span></td>
+<td style="color:#3fb950">QII</td><td></td>
+</tr><tr>
+<td class="num">5</td><td class="name-cell">K-5대주도TOP10</td>
+<td class="num big">6.22</td><td class="num">6.86</td><td class="num">5.95</td><td class="num">6.18</td>
+<td class="num pos">5</td><td class="num neg">0</td>
+<td class="num">5</td><td><span class="mute">–</span></td>
+<td style="color:#58a6ff">QIII</td><td></td>
+</tr><tr>
+<td class="num">6</td><td class="name-cell"><span class="new">NEW</span> 반도체자동차조선+</td>
+<td class="num big">6.19</td><td class="num">6.59</td><td class="num">6.68</td><td class="num">5.5</td>
+<td class="num pos">0</td><td class="num neg">0</td>
+<td class="num">-</td><td><span class="new">NEW</span></td>
+<td style="color:#3fb950">QII</td><td></td>
+</tr><tr>
+<td class="num">7</td><td class="name-cell">반도체자동차조선플러스</td>
+<td class="num big">6.16</td><td class="num">6.73</td><td class="num">6.27</td><td class="num">5.77</td>
+<td class="num pos">4</td><td class="num neg">0</td>
+<td class="num">4</td><td><span class="down">▼3</span></td>
+<td style="color:#3fb950">QII</td><td></td>
+</tr><tr>
+<td class="num">8</td><td class="name-cell">반도체자동차플러스</td>
+<td class="num big">6.01</td><td class="num">6.68</td><td class="num">6.23</td><td class="num">5.45</td>
+<td class="num pos">3</td><td class="num neg">1</td>
+<td class="num">1</td><td><span class="down">▼7</span></td>
+<td style="color:#d29922">QI</td><td>📱 숏폼</td>
+</tr><tr>
+<td class="num">9</td><td class="name-cell">K-5대산업TOP10</td>
+<td class="num big">5.94</td><td class="num">6.68</td><td class="num">5.68</td><td class="num">5.82</td>
+<td class="num pos">1</td><td class="num neg">0</td>
+<td class="num">2</td><td><span class="down">▼7</span></td>
+<td style="color:#58a6ff">QIII</td><td></td>
+</tr><tr>
+<td class="num">10</td><td class="name-cell">K-5대코어TOP10</td>
+<td class="num big">5.69</td><td class="num">6.36</td><td class="num">5.5</td><td class="num">5.55</td>
+<td class="num pos">2</td><td class="num neg">0</td>
+<td class="num">10</td><td><span class="mute">–</span></td>
+<td style="color:#58a6ff">QIII</td><td></td>
+</tr><tr>
+<td class="num">11</td><td class="name-cell">코리아5대주도TOP10</td>
+<td class="num big">5.64</td><td class="num">6.18</td><td class="num">5.59</td><td class="num">5.41</td>
+<td class="num pos">0</td><td class="num neg">0</td>
+<td class="num">9</td><td><span class="down">▼2</span></td>
+<td style="color:#f85149">QIV</td><td></td>
+</tr><tr>
+<td class="num">12</td><td class="name-cell">K-5대전략TOP10</td>
+<td class="num big">5.4</td><td class="num">6.09</td><td class="num">5.27</td><td class="num">5.18</td>
+<td class="num pos">1</td><td class="num neg">0</td>
+<td class="num">7</td><td><span class="down">▼5</span></td>
+<td style="color:#f85149">QIV</td><td></td>
+</tr><tr>
+<td class="num">13</td><td class="name-cell">K-5전략TOP10</td>
+<td class="num big">5.36</td><td class="num">6.09</td><td class="num">5.18</td><td class="num">5.18</td>
+<td class="num pos">1</td><td class="num neg">5</td>
+<td class="num">6</td><td><span class="down">▼7</span></td>
+<td style="color:#f85149">QIV</td><td></td>
+</tr><tr>
+<td class="num">14</td><td class="name-cell">K5대전략TOP10</td>
+<td class="num big">5.31</td><td class="num">6.0</td><td class="num">5.18</td><td class="num">5.09</td>
+<td class="num pos">0</td><td class="num neg">0</td>
+<td class="num">11</td><td><span class="down">▼3</span></td>
+<td style="color:#f85149">QIV</td><td></td>
+</tr><tr>
+<td class="num">15</td><td class="name-cell">K-5대산업주도TOP10</td>
+<td class="num big">4.82</td><td class="num">5.36</td><td class="num">4.55</td><td class="num">4.82</td>
+<td class="num pos">0</td><td class="num neg">14</td>
+<td class="num">12</td><td><span class="down">▼3</span></td>
+<td style="color:#f85149">QIV</td><td>❌ 기각</td>
+</tr><tr>
+<td class="num">16</td><td class="name-cell">K-5대액티브TOP10</td>
+<td class="num big">4.61</td><td class="num">5.14</td><td class="num">5.05</td><td class="num">3.91</td>
+<td class="num pos">0</td><td class="num neg">21</td>
+<td class="num">13</td><td><span class="down">▼3</span></td>
+<td style="color:#f85149">QIV</td><td>❌ 기각</td>
+</tr><tr>
+<td class="num">17</td><td class="name-cell">K-5대K-TOP10</td>
+<td class="num big">3.48</td><td class="num">3.5</td><td class="num">4.23</td><td class="num">2.73</td>
+<td class="num pos">0</td><td class="num neg">22</td>
+<td class="num">14</td><td><span class="down">▼3</span></td>
+<td style="color:#f85149">QIV</td><td>❌ 기각</td>
+</tr></tbody>
+</table>
+<p class="mute">종합 = 0.2×FI + 0.4×MEM + 0.4×PI. Best/Worst는 각 22명 × 3표 = 66표 중 득표.</p>
+</div>
+
+<h2>③ Top 3 상세</h2>
+<div class="card rank-card">
+<h3><span class="rank rank-1">1위</span> <span class="new">NEW</span> 반도체조선방산플러스 <span class="score-big">7.46</span></h3>
+<p class="narrative">22명 중 21명이 BEST3에 선택한 <strong>95% 만장일치 후보</strong>. 2025 PLUS K방산 ETF +182% 수익률·조방원 슈퍼사이클 실증 데이터가 에이전트 판단에 주입된 결과. 'ETF 이름만 봐도 뜨고 있는 섹터를 담고 있다'는 신호가 PI=7.41(최고)를 끌어올림. 자동차 포함 조합(반자·반자조) 대비 조방원 조합이 지배적 승자.</p>
+<div class="axis-bar">
+<div class="axis"><span>FI 8.0</span><div class="bar"><i style="width:80.0%"></i></div></div>
+<div class="axis"><span>MEM 7.23</span><div class="bar mem"><i style="width:72.30000000000001%"></i></div></div>
+<div class="axis"><span>PI 7.41</span><div class="bar pi"><i style="width:74.1%"></i></div></div>
+</div>
+<div class="grid2">
+<div><h4 class="win">최고 반응</h4><ul><li><strong>장현수</strong> FI=9 MEM=8 PI=8 — “현재 강테마 핵심조합”</li><li><strong>윤재호</strong> FI=9 MEM=8 PI=8 — “인기축 3개 핵심”</li><li><strong>엔비디아 젠슨 황</strong> FI=8 MEM=7 PI=8 — “현 트렌드 정조준”</li></ul></div>
+<div><h4 class="bad">최저 반응</h4><ul><li><strong>박순자</strong> FI=7 MEM=7 PI=6 — “인기 섹터 조합”</li><li><strong>강민지</strong> FI=8 MEM=7 PI=6 — “요즘 테마 핵심 조합”</li></ul></div>
+</div>
+</div><div class="card rank-card">
+<h3><span class="rank rank-2">2위</span> <span class="new">NEW</span> 반도체조선방산+ <span class="score-big">7.42</span></h3>
+<p class="narrative">플러스 버전과 0.04점 차이의 준우승. 11자 → 8자로 짧아져 MEM 상승(7.23→7.77). '+'의 공식성 부담(대표 발화: '공식명 같지 않다')으로 PI만 살짝 밀림. 숏폼·캠페인 전용으로 최적.</p>
+<div class="axis-bar">
+<div class="axis"><span>FI 7.64</span><div class="bar"><i style="width:76.39999999999999%"></i></div></div>
+<div class="axis"><span>MEM 7.77</span><div class="bar mem"><i style="width:77.69999999999999%"></i></div></div>
+<div class="axis"><span>PI 6.95</span><div class="bar pi"><i style="width:69.5%"></i></div></div>
+</div>
+<div class="grid2">
+<div><h4 class="win">최고 반응</h4><ul><li><strong>오민재</strong> FI=9 MEM=8 PI=9 — “+가 빠르고 강함”</li><li><strong>엔비디아 젠슨 황</strong> FI=8 MEM=8 PI=8 — “짧고 현대적”</li><li><strong>이진우</strong> FI=8 MEM=8 PI=8 — “짧고 금융스러움”</li></ul></div>
+<div><h4 class="bad">최저 반응</h4><ul><li><strong>강민지</strong> FI=7 MEM=6 PI=4 — “+가 공식명 같진 않음”</li><li><strong>박순자</strong> FI=6 MEM=7 PI=5 — “+가 가벼워 보여요”</li></ul></div>
+</div>
+</div><div class="card rank-card">
+<h3><span class="rank rank-3">3위</span> 반차조방원 <span class="score-big">6.63</span></h3>
+<p class="narrative">v3(3.90) → v4(5.23) PI 회복. 시장 컨텍스트 주입으로 '이 줄임말이 실제로 통용됨' 신호 강화. MEM=8.27 여전히 전체 1위. 다만 5섹터 전체 줄임말이 오히려 3섹터 조합(반조방)보다 집중도 낮다는 인식.</p>
+<div class="axis-bar">
+<div class="axis"><span>FI 6.14</span><div class="bar"><i style="width:61.4%"></i></div></div>
+<div class="axis"><span>MEM 8.27</span><div class="bar mem"><i style="width:82.69999999999999%"></i></div></div>
+<div class="axis"><span>PI 5.23</span><div class="bar pi"><i style="width:52.300000000000004%"></i></div></div>
+</div>
+<div class="grid2">
+<div><h4 class="win">최고 반응</h4><ul><li><strong>박곰희TV</strong> FI=8 MEM=9 PI=8 — “한방에 테마 각인”</li><li><strong>박준혁</strong> FI=8 MEM=9 PI=7 — “줄임말 임팩트 큼”</li><li><strong>이서연</strong> FI=8 MEM=9 PI=7 — “줄임말 강력, 트렌드”</li></ul></div>
+<div><h4 class="bad">최저 반응</h4><ul><li><strong>장현수</strong> FI=3 MEM=6 PI=2 — “약어 해석 필요”</li><li><strong>박순자</strong> FI=3 MEM=8 PI=2 — “뜻 모르겠어요”</li></ul></div>
+</div>
+</div>
+
+<h2>④ 섹터 조합·기호 대조 실험</h2>
+<div class="card">
+<h3>실험 1: 섹터 조합 효과 (플러스 접미사 통일)</h3>
+<table><thead><tr><th>후보</th><th>섹터 조합</th><th>글자수</th><th>FI</th><th>MEM</th><th>PI</th><th>종합</th><th>순위</th></tr></thead><tbody>
+<tr><td>반도체자동차플러스</td><td>반·자 (2개)</td><td class="num">9</td><td class="num">6.68</td><td class="num">6.23</td><td class="num">5.45</td><td class="num big">6.01</td><td class="num">8위</td></tr>
+<tr><td>반도체자동차조선플러스</td><td>반·자·조 (3개)</td><td class="num">11</td><td class="num">6.73</td><td class="num">6.27</td><td class="num">5.77</td><td class="num big">6.16</td><td class="num">7위</td></tr>
+<tr class="delta-row"><td><strong>반도체조선방산플러스 ⭐</strong></td><td><strong>반·조·방 (3개, 조방원 흐름)</strong></td><td class="num">11</td><td class="num pos">8.0</td><td class="num pos">7.23</td><td class="num pos">7.41</td><td class="num big pos">7.46</td><td class="num pos">1위 🏆</td></tr>
+</tbody></table>
+<p><strong>결론:</strong> 동일한 3섹터 명시에서도 조합 선택이 결정적. "자동차 포함"(반자조) 대비 "방산 포함"(반조방)이 종합 +1.30 차이. 2025 PLUS K방산 +182%, KODEX 미국원자력SMR +23% 같은 <strong>실제 시장 성과 데이터</strong>가 에이전트 기억에 학습된 결과 — "자동차는 이미 다 아는 대형주, 조방원이 진짜 뜨고 있다"는 리테일 심리 재현.</p>
+</div>
+
+<div class="card">
+<h3>실험 2: "플러스" vs "+" 기호 효과</h3>
+<table><thead><tr><th>Pair</th><th>접미사</th><th>글자수</th><th>FI</th><th>MEM</th><th>PI</th><th>종합</th></tr></thead><tbody>
+<tr><td rowspan="2">반조방</td><td>플러스</td><td class="num">11</td><td class="num">8.0</td><td class="num">7.23</td><td class="num">7.41</td><td class="num big">7.46</td></tr>
+<tr><td>+</td><td class="num">8</td><td class="num">7.64</td><td class="num pos">7.77</td><td class="num">6.95</td><td class="num big">7.42</td></tr>
+<tr><td rowspan="2">반자조</td><td>플러스</td><td class="num">11</td><td class="num">6.73</td><td class="num">6.27</td><td class="num">5.77</td><td class="num big">6.16</td></tr>
+<tr><td>+</td><td class="num">9</td><td class="num">6.59</td><td class="num pos">6.68</td><td class="num">5.5</td><td class="num big">6.19</td></tr>
+</tbody></table>
+<p><strong>결론:</strong> "+" 기호는 길이 단축 효과로 MEM +0.42~0.54 소폭 상승. 그러나 PI는 각 0.27~0.46 하락("공식명 같지 않다"·"찜찜하다" 발화). <strong>종합 점수는 거의 동률</strong> — 마케팅 캠페인용 해시태그(#반도체조선방산+)와 공식명(반도체조선방산플러스)을 분리하는 것이 최적.</p>
+</div>
+
+<h2>⑤ MEM × PI 사분면 (17점)</h2>
+<div class="card">
+<div class="scatter">
+<span class="q-label q-tl">QIII 캠페인</span><span class="q-label q-tr">QII 정식명 ✓</span>
+<span class="q-label q-bl">QIV 기각</span><span class="q-label q-br">QI 숏폼·밈</span>
+<div class="dot" style="left:70.80000000000001%;top:24.4%;background:#3fb950" title="반도체조선방산플러스"><span class="label">반도체조선방산플러스</span></div><div class="dot" style="left:76.19999999999999%;top:29.0%;background:#3fb950" title="반도체조선방산+"><span class="label">반도체조선방산+</span></div><div class="dot" style="left:81.19999999999999%;top:46.199999999999996%;background:#d29922" title="반차조방원"><span class="label">반차조방원</span></div><div class="dot" style="left:64.89999999999999%;top:39.9%;background:#3fb950" title="K5대산업 정예TOP10"><span class="label">K5대산업 정예TOP10</span></div><div class="dot" style="left:58.0%;top:36.7%;background:#58a6ff" title="K-5대주도TOP10"><span class="label">K-5대주도TOP10</span></div><div class="dot" style="left:65.3%;top:43.5%;background:#3fb950" title="반도체자동차조선+"><span class="label">반도체자동차조선+</span></div><div class="dot" style="left:61.199999999999996%;top:40.800000000000004%;background:#3fb950" title="반도체자동차조선플러스"><span class="label">반도체자동차조선플러스</span></div><div class="dot" style="left:60.800000000000004%;top:44.0%;background:#d29922" title="반도체자동차플러스"><span class="label">반도체자동차플러스</span></div><div class="dot" style="left:55.3%;top:40.3%;background:#58a6ff" title="K-5대산업TOP10"><span class="label">K-5대산업TOP10</span></div><div class="dot" style="left:53.5%;top:43.0%;background:#58a6ff" title="K-5대코어TOP10"><span class="label">K-5대코어TOP10</span></div><div class="dot" style="left:54.4%;top:44.4%;background:#f85149" title="코리아5대주도TOP10"><span class="label">코리아5대주도TOP10</span></div><div class="dot" style="left:51.199999999999996%;top:46.7%;background:#f85149" title="K-5대전략TOP10"><span class="label">K-5대전략TOP10</span></div><div class="dot" style="left:50.3%;top:46.7%;background:#f85149" title="K-5전략TOP10"><span class="label">K-5전략TOP10</span></div><div class="dot" style="left:50.3%;top:47.6%;background:#f85149" title="K5대전략TOP10"><span class="label">K5대전략TOP10</span></div><div class="dot" style="left:44.0%;top:50.3%;background:#f85149" title="K-5대산업주도TOP10"><span class="label">K-5대산업주도TOP10</span></div><div class="dot" style="left:49.0%;top:59.4%;background:#f85149" title="K-5대액티브TOP10"><span class="label">K-5대액티브TOP10</span></div><div class="dot" style="left:40.800000000000004%;top:71.19999999999999%;background:#f85149" title="K-5대K-TOP10"><span class="label">K-5대K-TOP10</span></div>
+</div>
+</div>
+
+<h2>⑥ 3단 배포 권고안 (v4 최종)</h2>
+<div class="card">
+<div class="tier"><span class="tier-badge">정식명</span><div><strong>반도체조선방산플러스</strong> — 95% 만장일치 1위. 2025 PLUS K방산 +182%·조방원 슈퍼사이클 연상이 PI=7.41 견인. WORST3 0표로 어떤 세그먼트도 거부하지 않음.</div></div>
+<div class="tier"><span class="tier-badge">대체안</span><div><strong>반도체조선방산+</strong> — 0.04점 차이의 준우승. 8자로 짧아 MEM 우위. 공식명 부담이 있다면 이 쪽.</div></div>
+<div class="tier"><span class="tier-badge">캠페인</span><div><strong>#반차조방원</strong> 또는 <strong>#반도체조선방산+</strong> — MEM 8.27 자산과 짧은 기호 조합 둘 다 바이럴 자산.</div></div>
+<div class="tier"><span class="tier-badge">기각</span><div><strong>K-5대K-TOP10</strong>(WORST 22/22 만장), <strong>K-5대액티브TOP10</strong>(WORST 21), <strong>K-5대산업주도TOP10</strong>(WORST 14)</div></div>
+</div>
+
+<h2>⑦ 버전별 변천</h2>
+<div class="card">
+<table><thead><tr><th>버전</th><th>모델</th><th>후보</th><th>페르소나</th><th>1위</th><th>주요 통찰</th></tr></thead><tbody>
+<tr><td>v1</td><td>gpt-4o-mini + 구조점수</td><td>13</td><td>-</td><td>K-5대전략TOP10 (6.87)</td><td>방법론 제약 포함 최적</td></tr>
+<tr><td>v2</td><td>gpt-4o-mini + CoT</td><td>13</td><td>32</td><td>반차조방원 (6.78)</td><td>제약 해제 시 밈이 1위</td></tr>
+<tr><td>v3</td><td>gpt-5.2</td><td>14</td><td>20</td><td>반도체자동차플러스 (6.83)</td><td>섹터 직접 명시 + PI 정교화</td></tr>
+<tr><td class="delta-row"><strong>v4</strong></td><td>gpt-5.2 + 시장 리서치</td><td>17</td><td>22</td><td><strong>반도체조선방산플러스 (7.46)</strong></td><td><strong>조방원 슈퍼사이클 승리</strong></td></tr>
+</tbody></table>
+<p>v1→v4로 갈수록 <strong>시장 실증 데이터의 영향력이 증가</strong>. v4는 "2025 뜨거웠던 섹터가 이름에 보이면 즉각 매수욕구 발동" 심리를 정량 측정. 단, 시장 사이클이 바뀌면 재실행 필요.</p>
+</div>
+
+<div class="card">
+<h4>시장 컨텍스트 출처 (에이전트 학습 반영)</h4>
+<ul>
+<li><a href="https://magazine.hankyung.com/money/article/202512165521c" target="_blank">한경매거진 — 자금 몰리는 주도 업종…2026년도 액티브 ETF가 답이다</a></li>
+<li><a href="https://news.nate.com/view/20251205n29206" target="_blank">네이트 — AI·원전·조선이 이끈 올해 증시, 2026 새 주도 섹터</a></li>
+<li><a href="https://news.skhynix.co.kr/2026-market-outlook/" target="_blank">SK hynix — 2026 HBM 슈퍼사이클 전망</a></li>
+<li><a href="https://www.fntimes.com/html/view.php?ud=2025123115390442770f4390e77d_18" target="_blank">한국금융신문 — 반도체·조선·방산 주목 2026 전략</a></li>
+<li><a href="https://stock1.brokdam.com/2026-%EC%9B%90%EC%A0%84%C2%B7smr-%EA%B4%80%EB%A0%A8%EC%A3%BC-%EC%B4%9D%EC%A0%95%EB%A6%AC-%EB%91%90%EC%82%B0%EC%97%90%EB%84%88%EB%B9%8C%EB%A6%AC%ED%8B%B0-%ED%8F%AC%ED%95%A8-5%EC%A2%85%EB%AA%A9/" target="_blank">원전·SMR 관련주 총정리 2026</a></li>
+<li><a href="https://kr.investing.com/news/stock-market-news/article-1889411" target="_blank">인포스탁데일리 — 4월 키워드 'AI 연결'과 'AI 에너지'</a></li>
+<li><a href="https://www.joongangenews.com/news/articleView.html?idxno=465268" target="_blank">중앙이코노미 — 토스증권 AI 시그널</a></li>
+</ul>
+</div>
+
+<h2>⑧ 한계</h2>
+<div class="card">
+<ul>
+<li><strong>시장 컨텍스트 의존성</strong>: "조방원 슈퍼사이클"이 식을 경우 1·2위 후보 우위가 사라질 수 있음. 분기마다 재실행 권고.</li>
+<li><strong>22 페르소나 샘플</strong>: 실제 한국 ETF 투자자 인구 분포와 편차 가능. A/B 테스트 보완 필수.</li>
+<li><strong>gpt-5.2 비용</strong>: 1회 인터뷰 약 수~수십 달러. 빈번한 재실행은 비용 부담.</li>
+<li><strong>섹터 순서 효과 미측정</strong>: "반도체조선방산" vs "조선방산반도체" 순서 변경 반응은 별도 실험 필요.</li>
+</ul>
+</div>
+
+<div class="footer">MiroFish-Ko · 시뮬 ID sim_3609c99cbc6d · 그래프 mirofish_27ecd8963a7f43e8 · 모델 gpt-5.2 · 웹 리서치: 한경·네이트·SK hynix·한국금융신문·브록담·인포스탁데일리·중앙이코노미 · 생성 2026-04-16 08:39 KST</div>
+</div></body></html>

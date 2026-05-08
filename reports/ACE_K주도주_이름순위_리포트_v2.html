@@ -1,0 +1,360 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>ACE K주도주 이름 순위 v2 · 즉각 반응 기반</title>
+<style>
+:root{--bg:#0b0d10;--card:#151a21;--line:#262d36;--text:#e6edf3;--muted:#8b949e;--accent:#58a6ff;--win:#3fb950;--bad:#f85149;--warn:#d29922;--gold:#f1c40f;--silver:#bdc3c7;--bronze:#cd7f32}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:'Segoe UI','Malgun Gothic',system-ui;line-height:1.6}
+.wrap{max-width:1200px;margin:0 auto;padding:36px 24px}
+h1{font-size:28px;margin:0 0 4px}h2{font-size:22px;margin:32px 0 12px;border-left:4px solid var(--accent);padding-left:12px}h3{font-size:17px;margin:16px 0 8px;color:var(--accent)}h4{margin:12px 0 4px;font-size:13px}
+.sub{color:var(--muted);font-size:14px;margin-bottom:20px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:18px 22px;margin:14px 0}
+table{width:100%;border-collapse:collapse;font-size:13px;margin:8px 0}th,td{padding:9px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{background:#1c2530;color:var(--muted);font-weight:600;font-size:12px}tr:hover td{background:#1c2530}
+.num{font-variant-numeric:tabular-nums;text-align:right}.big{font-size:17px;font-weight:700;color:var(--accent)}
+.name-cell{font-weight:600}
+.win,.pos{color:var(--win)}.bad,.neg{color:var(--bad)}.mute{color:var(--muted)}.up{color:var(--win);font-weight:700}.down{color:var(--bad);font-weight:700}
+.rank-card h3 .rank{display:inline-block;width:52px;padding:4px 8px;border-radius:14px;font-size:13px;color:#0b0d10;font-weight:800;margin-right:8px}
+.rank-1{background:var(--gold)}.rank-2{background:var(--silver)}.rank-3{background:var(--bronze);color:#fff}
+.score-big{float:right;font-size:22px;color:var(--accent);font-weight:700}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:14px 0}
+.meta-box{background:#1c2530;border:1px solid var(--line);border-radius:6px;padding:10px;text-align:center}
+.meta-label{font-size:11px;color:var(--muted);letter-spacing:.5px}
+.meta-val{font-size:22px;font-weight:700;color:var(--accent);margin-top:4px}
+ul{margin:4px 0;padding-left:18px}li{margin:2px 0;font-size:12.5px}
+blockquote{margin:6px 0;padding:10px 14px;background:#1c2530;border-left:3px solid var(--accent);border-radius:4px;font-size:13px}
+.warn-box{background:#3d2e1a;border:1px solid #7a5e2a;border-radius:6px;padding:12px 16px;margin:12px 0;color:#f5c987}
+.win-box{background:#1a3d24;border:1px solid #2d5c38;border-radius:6px;padding:12px 16px;margin:12px 0;color:#7ee2a8}
+.narrative{color:var(--text);font-size:13.5px;padding:10px 12px;background:#1c2530;border-left:3px solid var(--accent);margin:10px 0}
+.axis-bar{display:flex;gap:12px;margin:8px 0}.axis{flex:1}.axis span{font-size:12px;color:var(--muted);display:block;margin-bottom:3px}.bar{height:7px;background:#262d36;border-radius:3px;overflow:hidden}.bar i{display:block;height:100%;background:linear-gradient(90deg,#58a6ff,#3fb950)}.bar.mem i{background:linear-gradient(90deg,#d29922,#f1c40f)}.bar.pi i{background:linear-gradient(90deg,#f85149,#7ee2a8)}
+.scatter{position:relative;width:100%;height:500px;background:linear-gradient(to right,rgba(248,81,73,0.08) 50%,rgba(63,185,80,0.08) 50%),#0f1317;border:1px solid var(--line);border-radius:8px;margin:12px 0}
+.scatter::before{content:'';position:absolute;left:50%;top:0;bottom:0;width:1px;background:var(--line)}
+.scatter::after{content:'';position:absolute;top:50%;left:0;right:0;height:1px;background:var(--line)}
+.scatter .q-label{position:absolute;font-size:11px;color:var(--muted);font-weight:600;letter-spacing:.5px}
+.scatter .q-tl{top:8px;left:8px}.scatter .q-tr{top:8px;right:8px;color:var(--win)}.scatter .q-bl{bottom:8px;left:8px;color:var(--bad)}.scatter .q-br{bottom:8px;right:8px;color:var(--warn)}
+.scatter .axis-lx{position:absolute;bottom:-22px;right:0;font-size:11px;color:var(--muted)}.scatter .axis-ly{position:absolute;top:-18px;left:0;font-size:11px;color:var(--muted);transform:rotate(0)}
+.dot{position:absolute;width:12px;height:12px;border-radius:50%;border:2px solid #0b0d10;box-shadow:0 0 8px rgba(88,166,255,0.3)}
+.dot .label{position:absolute;left:16px;top:-2px;font-size:11px;white-space:nowrap;color:var(--text);background:rgba(21,26,33,0.9);padding:1px 5px;border-radius:3px}
+.footer{color:var(--muted);font-size:12px;margin-top:40px;padding-top:18px;border-top:1px solid var(--line)}
+.tier{display:grid;grid-template-columns:auto 1fr;gap:14px;margin:8px 0;align-items:center}
+.tier-badge{background:var(--accent);color:#0b0d10;padding:4px 10px;border-radius:4px;font-weight:700;font-size:12px;text-align:center;min-width:70px}
+.kvlist{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;font-size:13px}
+.kvlist dt{color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>🎯 ACE K주도주 이름 순위 v2 — 즉각 반응 기반</h1>
+<div class="sub">제약조건 제거 · 32개 페르소나 × 13 후보 × FI/MEM/PI 직접 인터뷰 · prompt engineering 논문 기반 설계 · 2026-04-16 실행</div>
+
+<h2>① 시뮬 실행 요약</h2>
+<div class="card">
+<div class="grid3">
+<div class="meta-box"><div class="meta-label">인터뷰 페르소나</div><div class="meta-val">32</div></div>
+<div class="meta-box"><div class="meta-label">평가 후보</div><div class="meta-val">13</div></div>
+<div class="meta-box"><div class="meta-label">총 데이터포인트</div><div class="meta-val">416</div></div>
+<div class="meta-box"><div class="meta-label">그래프 노드</div><div class="meta-val">83</div></div>
+<div class="meta-box"><div class="meta-label">측정 축</div><div class="meta-val">3</div></div>
+<div class="meta-box"><div class="meta-label">LLM 모델</div><div class="meta-val" style="font-size:14px">gpt-4o-mini</div></div>
+</div>
+<p><strong>v1 대비 변경점:</strong> (a) 지수 방법론·제약조건 전면 제거, (b) 시드문서 재작성(Wei 2022 CoT + Brown 2020 Few-Shot + Li 2023 EmotionPrompt 적용), (c) 12라운드 emergent 시뮬 → 6라운드 + 32 페르소나 직접 인터뷰 하이브리드, (d) 구조 점수 제거하고 페르소나 직접 응답만 사용.</p>
+</div>
+
+<h2>② 최종 순위 (Final Ranking)</h2>
+<div class="card">
+<table>
+<thead><tr><th>#</th><th>후보명</th><th>종합</th><th>FI</th><th>MEM</th><th>PI</th><th>Best</th><th>Worst</th><th>v1</th><th>변동</th><th>사분면</th><th>플래그</th></tr></thead>
+<tbody><tr>
+<td class="num">1</td>
+<td class="name-cell">반차조방원</td>
+<td class="num big">6.78</td>
+<td class="num">6.59</td>
+<td class="num">8.16</td>
+<td class="num">5.5</td>
+<td class="num pos">17</td>
+<td class="num neg">10</td>
+<td class="num">3</td>
+<td><span class="up">▲2</span></td>
+<td style="color:#3fb950">QII 정식명 후보</td>
+<td>🏆 정식명 권고</td>
+</tr><tr>
+<td class="num">2</td>
+<td class="name-cell">반도체자동차플러스</td>
+<td class="num big">6.71</td>
+<td class="num">6.62</td>
+<td class="num">7.41</td>
+<td class="num">6.06</td>
+<td class="num pos">7</td>
+<td class="num neg">0</td>
+<td class="num">11</td>
+<td><span class="up">▲9</span></td>
+<td style="color:#3fb950">QII 정식명 후보</td>
+<td>🥈 대체안</td>
+</tr><tr>
+<td class="num">3</td>
+<td class="name-cell">K-5대산업TOP10</td>
+<td class="num big">6.33</td>
+<td class="num">6.75</td>
+<td class="num">6.69</td>
+<td class="num">5.75</td>
+<td class="num pos">17</td>
+<td class="num neg">2</td>
+<td class="num">2</td>
+<td><span class="down">▼1</span></td>
+<td style="color:#3fb950">QII 정식명 후보</td>
+<td>🥉 대체안</td>
+</tr><tr>
+<td class="num">4</td>
+<td class="name-cell">K-5대코어TOP10</td>
+<td class="num big">6.23</td>
+<td class="num">6.47</td>
+<td class="num">6.66</td>
+<td class="num">5.69</td>
+<td class="num pos">12</td>
+<td class="num neg">4</td>
+<td class="num">9</td>
+<td><span class="up">▲5</span></td>
+<td style="color:#3fb950">QII 정식명 후보</td>
+<td></td>
+</tr><tr>
+<td class="num">5</td>
+<td class="name-cell">K5대전략TOP10</td>
+<td class="num big">5.87</td>
+<td class="num">6.28</td>
+<td class="num">6.09</td>
+<td class="num">5.44</td>
+<td class="num pos">7</td>
+<td class="num neg">1</td>
+<td class="num">7</td>
+<td><span class="up">▲2</span></td>
+<td style="color:#58a6ff">QIII 캠페인·일시</td>
+<td></td>
+</tr><tr>
+<td class="num">6</td>
+<td class="name-cell">K-5대전략TOP10</td>
+<td class="num big">5.84</td>
+<td class="num">6.34</td>
+<td class="num">6.0</td>
+<td class="num">5.44</td>
+<td class="num pos">4</td>
+<td class="num neg">2</td>
+<td class="num">1</td>
+<td><span class="down">▼5</span></td>
+<td style="color:#58a6ff">QIII 캠페인·일시</td>
+<td></td>
+</tr><tr>
+<td class="num">7</td>
+<td class="name-cell">코리아5대주도TOP10</td>
+<td class="num big">5.78</td>
+<td class="num">6.03</td>
+<td class="num">6.22</td>
+<td class="num">5.22</td>
+<td class="num pos">6</td>
+<td class="num neg">2</td>
+<td class="num">6</td>
+<td><span class="down">▼1</span></td>
+<td style="color:#f85149">QIV 기각</td>
+<td></td>
+</tr><tr>
+<td class="num">8</td>
+<td class="name-cell">K-5대산업주도TOP10</td>
+<td class="num big">5.76</td>
+<td class="num">6.19</td>
+<td class="num">6.06</td>
+<td class="num">5.25</td>
+<td class="num pos">11</td>
+<td class="num neg">10</td>
+<td class="num">4</td>
+<td><span class="down">▼4</span></td>
+<td style="color:#f85149">QIV 기각</td>
+<td></td>
+</tr><tr>
+<td class="num">9</td>
+<td class="name-cell">K-5대주도TOP10</td>
+<td class="num big">5.56</td>
+<td class="num">5.88</td>
+<td class="num">5.88</td>
+<td class="num">5.09</td>
+<td class="num pos">5</td>
+<td class="num neg">11</td>
+<td class="num">5</td>
+<td><span class="down">▼4</span></td>
+<td style="color:#f85149">QIV 기각</td>
+<td></td>
+</tr><tr>
+<td class="num">10</td>
+<td class="name-cell">K5대산업 정예TOP10</td>
+<td class="num big">5.48</td>
+<td class="num">5.72</td>
+<td class="num">5.91</td>
+<td class="num">4.94</td>
+<td class="num pos">2</td>
+<td class="num neg">8</td>
+<td class="num">12</td>
+<td><span class="up">▲2</span></td>
+<td style="color:#f85149">QIV 기각</td>
+<td></td>
+</tr><tr>
+<td class="num">11</td>
+<td class="name-cell">K-5전략TOP10</td>
+<td class="num big">5.42</td>
+<td class="num">5.94</td>
+<td class="num">5.66</td>
+<td class="num">4.91</td>
+<td class="num pos">2</td>
+<td class="num neg">5</td>
+<td class="num">8</td>
+<td><span class="down">▼3</span></td>
+<td style="color:#f85149">QIV 기각</td>
+<td>❌ 기각 권고</td>
+</tr><tr>
+<td class="num">12</td>
+<td class="name-cell">K-5대액티브TOP10</td>
+<td class="num big">5.35</td>
+<td class="num">5.81</td>
+<td class="num">5.62</td>
+<td class="num">4.84</td>
+<td class="num pos">5</td>
+<td class="num neg">15</td>
+<td class="num">10</td>
+<td><span class="down">▼2</span></td>
+<td style="color:#f85149">QIV 기각</td>
+<td>❌ 기각 권고</td>
+</tr><tr>
+<td class="num">13</td>
+<td class="name-cell">K-5대K-TOP10</td>
+<td class="num big">4.58</td>
+<td class="num">5.0</td>
+<td class="num">4.91</td>
+<td class="num">4.03</td>
+<td class="num pos">1</td>
+<td class="num neg">26</td>
+<td class="num">13</td>
+<td><span class="mute">–</span></td>
+<td style="color:#f85149">QIV 기각</td>
+<td>❌ 기각 권고</td>
+</tr></tbody>
+</table>
+<p class="mute">종합 = 0.2×FI + 0.4×MEM + 0.4×PI (구매·기억 가중). 사분면: QII=우상(정식명), QI=우하(숏폼), QIII=좌상(캠페인), QIV=좌하(기각). v1 대비 변동은 제약조건 제거 효과.</p>
+</div>
+
+<div class="warn-box">
+<strong>⚠️ v1 대비 극적인 순위 역전</strong><br>
+구조·방법론 제약을 제거하자 <strong>반차조방원(11→1위)</strong>과 <strong>반도체자동차플러스(11→2위)</strong>가 상위로 급상승했다. 이는 "이름의 즉각 반응"과 "방법론 정합성"이 정반대 방향으로 작동함을 실증한다. v1의 K-5대전략TOP10(1→6위 하락)은 제약조건 내 최적이었고, v2는 제약 해제 시 리테일 어필 극대화 선택지를 제시한다.
+</div>
+
+<h2>③ MEM × PI 2×2 매트릭스</h2>
+<div class="card">
+<p class="mute">X=Memorability(기억도), Y=Purchase Intent(구매욕구). 가운데선은 13개 후보의 중앙값. 우상 사분면(QII, 녹색)이 정식명 최적 위치.</p>
+<div class="scatter">
+<span class="q-label q-tl">QIII 낮은 MEM · 높은 PI<br>(캠페인·일시)</span>
+<span class="q-label q-tr">QII 높은 MEM · 높은 PI<br>(정식명 권고)</span>
+<span class="q-label q-bl">QIV 낮은 MEM · 낮은 PI<br>(기각)</span>
+<span class="q-label q-br">QI 높은 MEM · 낮은 PI<br>(숏폼·밈)</span>
+<span class="axis-lx">MEM →</span><span class="axis-ly">↑ PI</span>
+<div class="dot" style="left:79.6%;top:43.0%;background:#3fb950" title="반차조방원 MEM=8.16 PI=5.5"><span class="label">반차조방원</span></div><div class="dot" style="left:72.1%;top:37.400000000000006%;background:#3fb950" title="반도체자동차플러스 MEM=7.41 PI=6.06"><span class="label">반도체자동차플러스</span></div><div class="dot" style="left:64.9%;top:40.5%;background:#3fb950" title="K-5대산업TOP10 MEM=6.69 PI=5.75"><span class="label">K-5대산업TOP10</span></div><div class="dot" style="left:64.6%;top:41.099999999999994%;background:#3fb950" title="K-5대코어TOP10 MEM=6.66 PI=5.69"><span class="label">K-5대코어TOP10</span></div><div class="dot" style="left:58.9%;top:43.599999999999994%;background:#58a6ff" title="K5대전략TOP10 MEM=6.09 PI=5.44"><span class="label">K5대전략TOP10</span></div><div class="dot" style="left:58.0%;top:43.599999999999994%;background:#58a6ff" title="K-5대전략TOP10 MEM=6.0 PI=5.44"><span class="label">K-5대전략TOP10</span></div><div class="dot" style="left:60.199999999999996%;top:45.800000000000004%;background:#f85149" title="코리아5대주도TOP10 MEM=6.22 PI=5.22"><span class="label">코리아5대주도TOP10</span></div><div class="dot" style="left:58.599999999999994%;top:45.5%;background:#f85149" title="K-5대산업주도TOP10 MEM=6.06 PI=5.25"><span class="label">K-5대산업주도TOP10</span></div><div class="dot" style="left:56.8%;top:47.1%;background:#f85149" title="K-5대주도TOP10 MEM=5.88 PI=5.09"><span class="label">K-5대주도TOP10</span></div><div class="dot" style="left:57.1%;top:48.599999999999994%;background:#f85149" title="K5대산업 정예TOP10 MEM=5.91 PI=4.94"><span class="label">K5대산업 정예TOP10</span></div><div class="dot" style="left:54.6%;top:48.9%;background:#f85149" title="K-5전략TOP10 MEM=5.66 PI=4.91"><span class="label">K-5전략TOP10</span></div><div class="dot" style="left:54.2%;top:49.6%;background:#f85149" title="K-5대액티브TOP10 MEM=5.62 PI=4.84"><span class="label">K-5대액티브TOP10</span></div><div class="dot" style="left:47.1%;top:57.699999999999996%;background:#f85149" title="K-5대K-TOP10 MEM=4.91 PI=4.03"><span class="label">K-5대K-TOP10</span></div>
+</div>
+</div>
+
+<h2>④ Top 3 상세 분석</h2>
+<div class="card rank-card">
+<h3><span class="rank rank-1">1위</span> 반차조방원 <span class="score-big">6.78</span></h3>
+<p class="narrative">제약조건 제거 후 압도적 1위. FI·MEM·PI 모두 최상위권, 특히 MEM=8.16으로 전체 1위. BEST3 투표 17표(공동 1위)와 WORST3 10표로 양극단 반응을 동시 유발 — 이는 브랜드 밈의 전형적 시그니처. 투자자 페르소나들(이서연·정하늘·강민지)이 모두 FI=9·MEM=10·PI=8 만점 부근을 기록. 한국 투자자 어휘에 이미 통용 중이므로 learning cost 사실상 0.</p>
+<div class="axis-bar">
+<div class="axis"><span>FI 6.59</span><div class="bar"><i style="width:65.9%"></i></div></div>
+<div class="axis"><span>MEM 8.16</span><div class="bar mem"><i style="width:81.6%"></i></div></div>
+<div class="axis"><span>PI 5.5</span><div class="bar pi"><i style="width:55.0%"></i></div></div>
+</div>
+<div class="grid2">
+<div><h4 class="win">최고 반응 (self 제외)</h4><ul><li><strong>이서연</strong> FI=9 MEM=10 PI=8 — “독특하고 기억에 남음”</li><li><strong>정하늘</strong> FI=9 MEM=10 PI=8 — “재밌고 독특함”</li><li><strong>강민지</strong> FI=9 MEM=10 PI=8 — “독특하고 재미있음”</li></ul></div>
+<div><h4 class="bad">최저 반응 (self 제외)</h4><ul><li><strong>K-5대주도TOP10</strong> FI=3 MEM=2 PI=2 — “너무 장난스러움”</li><li><strong>K-5대K-TOP10</strong> FI=4 MEM=3 PI=2 — “너무 독특하여 난해함”</li></ul></div>
+</div>
+</div><div class="card rank-card">
+<h3><span class="rank rank-2">2위</span> 반도체자동차플러스 <span class="score-big">6.71</span></h3>
+<p class="narrative">WORST3 0표 — 전 에이전트가 무난히 수용. PI=6.06으로 구매욕구 최상위권. 5섹터 중 2섹터만 노출이 오히려 즉각적 산업 연상을 유도. 단 반차조방원보다 MEM=7.41로 0.75점 낮음 — 다른 &#x27;플러스&#x27; 상품과 혼동 가능성 있음.</p>
+<div class="axis-bar">
+<div class="axis"><span>FI 6.62</span><div class="bar"><i style="width:66.2%"></i></div></div>
+<div class="axis"><span>MEM 7.41</span><div class="bar mem"><i style="width:74.1%"></i></div></div>
+<div class="axis"><span>PI 6.06</span><div class="bar pi"><i style="width:60.599999999999994%"></i></div></div>
+</div>
+<div class="grid2">
+<div><h4 class="win">최고 반응 (self 제외)</h4><ul><li><strong>투자자 에이전트</strong> FI=8 MEM=9 PI=8 — “직관적이고 명확함”</li><li><strong>TIGER 반도체TOP10</strong> FI=8 MEM=8 PI=8 — “이해하기 쉽고 직관적.”</li><li><strong>정하늘</strong> FI=8 MEM=9 PI=7 — “직관적이고 직설적”</li></ul></div>
+<div><h4 class="bad">최저 반응 (self 제외)</h4><ul><li><strong>K-5전략TOP10</strong> FI=5 MEM=5 PI=4 — “너무 길고 인상적이지 않음”</li><li><strong>K-5대액티브TOP10</strong> FI=5 MEM=6 PI=4 — “길고 혼란스러움”</li></ul></div>
+</div>
+</div><div class="card rank-card">
+<h3><span class="rank rank-3">3위</span> K-5대산업TOP10 <span class="score-big">6.33</span></h3>
+<p class="narrative">BEST3 투표 17표(공동 1위)로 &#x27;안전한 1위&#x27; 포지션. FI=6.75로 첫인상 리더 그룹. 방법론 서술과 1:1 대응되어 승인·설명 양쪽에서 마찰 최소. MEM이 상대적으로 낮아(6.69) 숏폼 바이럴은 약함.</p>
+<div class="axis-bar">
+<div class="axis"><span>FI 6.75</span><div class="bar"><i style="width:67.5%"></i></div></div>
+<div class="axis"><span>MEM 6.69</span><div class="bar mem"><i style="width:66.9%"></i></div></div>
+<div class="axis"><span>PI 5.75</span><div class="bar pi"><i style="width:57.5%"></i></div></div>
+</div>
+<div class="grid2">
+<div><h4 class="win">최고 반응 (self 제외)</h4><ul><li><strong>K-5대액티브TOP10</strong> FI=8 MEM=8 PI=7 — “산업을 잘 전달함”</li><li><strong>K-5대K-TOP10</strong> FI=8 MEM=8 PI=7 — “산업 집중도 높음”</li><li><strong>투자자 에이전트</strong> FI=7 MEM=8 PI=6 — “산업에 초점 맞춤”</li></ul></div>
+<div><h4 class="bad">최저 반응 (self 제외)</h4><ul><li><strong>정하늘</strong> FI=5 MEM=5 PI=4 — “일반적이어서 약함”</li><li><strong>강민지</strong> FI=5 MEM=6 PI=4 — “다소 일반적인 느낌”</li></ul></div>
+</div>
+</div>
+
+<h2>⑤ 투표 집계 (BEST3 / WORST3)</h2>
+<div class="card">
+<div class="grid2">
+<div><h3>BEST3 (각 페르소나 3표)</h3><table><thead><tr><th>#</th><th>후보</th><th>BEST 투표</th></tr></thead><tbody><tr><td>1</td><td>반차조방원</td><td class="num pos">17</td></tr><tr><td>2</td><td>K-5대산업TOP10</td><td class="num pos">17</td></tr><tr><td>3</td><td>K-5대코어TOP10</td><td class="num pos">12</td></tr><tr><td>4</td><td>K-5대산업주도TOP10</td><td class="num pos">11</td></tr><tr><td>5</td><td>반도체자동차플러스</td><td class="num pos">7</td></tr></tbody></table></div>
+<div><h3>WORST3 (각 페르소나 3표)</h3><table><thead><tr><th>#</th><th>후보</th><th>WORST 투표</th></tr></thead><tbody><tr><td>1</td><td>K-5대K-TOP10</td><td class="num neg">26</td></tr><tr><td>2</td><td>K-5대액티브TOP10</td><td class="num neg">15</td></tr><tr><td>3</td><td>K-5대주도TOP10</td><td class="num neg">11</td></tr><tr><td>4</td><td>반차조방원</td><td class="num neg">10</td></tr><tr><td>5</td><td>K-5대산업주도TOP10</td><td class="num neg">10</td></tr></tbody></table></div>
+</div>
+<p class="mute">반차조방원·K-5대산업TOP10이 17표로 공동 1위. 반차조방원은 WORST3에도 10표 — 양극화 브랜드. 반도체자동차플러스는 WORST3 0표로 전무 저항.</p>
+</div>
+
+<h2>⑥ 프롬프트 엔지니어링 방법론</h2>
+<div class="card">
+<dl class="kvlist">
+<dt><strong>Wei et al. 2022</strong></dt><dd>Chain-of-Thought 5단 반응 체인 (FI→연상→MEM→PI→점수)을 페르소나 시스템 프롬프트에 주입</dd>
+<dt><strong>Brown et al. 2020</strong></dt><dd>Few-Shot Learning: 각 페르소나에 3개 이름의 모범 반응 예시 앵커링</dd>
+<dt><strong>Kojima et al. 2022</strong></dt><dd>Zero-Shot CoT "Let's think step by step" 원리의 한국어 적용</dd>
+<dt><strong>Li et al. 2023</strong></dt><dd>EmotionPrompt: "당신의 돈 200만원이 걸려 있다" 감정 자극으로 반응 진폭 증폭</dd>
+<dt><strong>Alter & Oppenheimer 2009</strong></dt><dd>Processing fluency를 MEM 평가 기준으로 차용 (발음 용이성·연상 속도)</dd>
+<dt><strong>Keller 1993</strong></dt><dd>Brand association 3축(강도·유리성·독특성)을 PI 측정에 적용</dd>
+<dt><strong>Wang et al. 2023</strong></dt><dd>Self-Consistency: 32 페르소나 독립 응답의 평균·분산으로 robust 순위 산출</dd>
+</dl>
+</div>
+
+<h2>⑦ 3단 배포 권고안</h2>
+<div class="win-box"><strong>✅ v2 최종 권고 — 제약조건 해제 시나리오</strong></div>
+<div class="card">
+<div class="tier"><span class="tier-badge">정식명</span><div><strong>반차조방원</strong> — 종합 6.78로 1위. MEM=8.16 압도적 1위, 이미 시장 통용 용어로 learning cost 0. 단, WORST3 10표는 PB·시니어 자리 부적합성을 의미 — 수용 가능한지 내부 합의 필요. 승인 심사 리스크는 상품전략부와 별도 협의.</div></div>
+<div class="tier"><span class="tier-badge">대체안</span><div><strong>반도체자동차플러스</strong> — 종합 6.71, WORST3 0표(전체 후보 중 유일). 어떤 세그먼트에서도 거부감이 없고 PI=6.06으로 구매욕구 최고. 5섹터 중 2섹터만 노출 이슈는 서브텍스트 "+방산·조선·원자력"으로 해소 가능.</div></div>
+<div class="tier"><span class="tier-badge">안전형</span><div><strong>K-5대산업TOP10</strong> — 방법론 호환이 필요하면 이 선택. BEST3 17표로 반차조방원과 동률. 어떤 논쟁도 피하고 싶을 때.</div></div>
+<div class="tier"><span class="tier-badge">캠페인</span><div><strong>#반차조방원</strong> (해시태그) — 정식명이 다른 이름이어도 캠페인 해시태그로는 무조건 활용</div></div>
+</div>
+
+<h2>⑧ 한계와 보정</h2>
+<div class="card">
+<ul>
+<li><strong>Self-rating bias</strong>: 일부 페르소나가 자기 이름(ETFNameCandidate 엔터티가 agent로 추출됨)에 높은 점수를 부여했다(예: "반도체자동차플러스" 에이전트가 자기 이름에 10/10/10). Top3 상세 인용에서는 self 제외 필터링 적용.</li>
+<li><strong>emergent 시뮬 실패</strong>: 초기 6라운드 시뮬은 메타 프롬프트 루프에 빠져 10 액션만 생성. 이를 `/interview/all` API로 우회하여 32 페르소나 직접 응답 취득 — 실질 데이터는 이 경로로 확보됨.</li>
+<li><strong>제약조건 무시의 trade-off</strong>: 반차조방원은 방법론 하드제약(섹터명 직접 명시 금지, 5대산업+TOP10 필수)을 위반함. 상품전략부 승인 심사에서는 별도 협의 필요. 본 리포트는 <strong>리테일 즉각 반응</strong>만 측정했다는 점 명확.</li>
+<li><strong>32 페르소나의 편향</strong>: 시드 기반으로 생성된 페르소나가 실제 한국 ETF 투자자 인구 분포를 완벽 반영하지 않을 수 있음. 실제 네이버 카페 투표 · 토스 클릭률 교차 검증 권고.</li>
+</ul>
+</div>
+
+<h2>⑨ v1 vs v2 비교</h2>
+<div class="card">
+<table>
+<thead><tr><th>기준</th><th>v1 (제약 포함)</th><th>v2 (제약 해제)</th></tr></thead>
+<tbody>
+<tr><td>1위</td><td>K-5대전략TOP10 (6.87)</td><td><strong class="win">반차조방원 (6.78)</strong></td></tr>
+<tr><td>2위</td><td>K-5대산업TOP10 (6.78)</td><td><strong>반도체자동차플러스 (6.71)</strong></td></tr>
+<tr><td>3위</td><td>반차조방원 (6.55)</td><td>K-5대산업TOP10 (6.33)</td></tr>
+<tr><td>방법론</td><td>구조 55% + 시뮬 25% + 전문가 20%</td><td>페르소나 직접 응답 100%</td></tr>
+<tr><td>측정 축</td><td>10개 유형 × 정성 감도</td><td>FI / MEM / PI 3축 정량</td></tr>
+<tr><td>데이터</td><td>87 포스트 (대부분 추상 토론)</td><td>32 × 13 = 416 구조화 응답</td></tr>
+<tr><td>판단 기준</td><td>방법론·브랜드 리스크 포함</td><td>리테일 즉각 반응 only</td></tr>
+</tbody>
+</table>
+<p>두 리포트는 <strong>동시 참조</strong>해야 한다. v1은 "승인 통과 가능한 후보 중 최적", v2는 "리테일 즉각 어필 극대화". 최종 상품명 결정은 <strong>경영진의 trade-off 판단 영역</strong>이다.</p>
+</div>
+
+<div class="footer">
+생성 도구: MiroFish-Ko · 시드: k주도주(가칭)_시드문서_v2.md · 요구사항: k주도주(가칭)_시뮬레이션요구사항_v2.md · 시뮬 ID: sim_ed72f7164bfb · 그래프 ID: mirofish_7fe4a7458ba04af8 · Interview API 직접 호출 · 생성: 2026-04-16 07:55 KST
+</div>
+</div></body></html>
