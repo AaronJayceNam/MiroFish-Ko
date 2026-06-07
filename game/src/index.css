@@ -1,0 +1,22 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+  body {
+    @apply bg-slate-950 text-slate-100 antialiased;
+    margin: 0;
+    /* 모바일 안전영역 */
+    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+  }
+}
+
+/* 설득 게이지 채움 트랜지션 */
+.meter-fill {
+  transition: width 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
